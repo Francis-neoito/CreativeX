@@ -380,7 +380,7 @@ const initHomeMainApp = function(){
                 </div>
             </div>
             <div class="homeAppHeader">
-                <div class="homeAppHeaderTitle">Creative<img id="titleX" src="/images/favcon.svg"></div>
+                <div class="homeAppHeaderTitle">Creative<img id="titleX" src="./images/favcon.svg"></div>
                 <nav class="homeAppLinksContainer">
                     <ul class="homeAppNavLink">
                         <li class="homeAppLinkItem">Projects</li>
@@ -396,7 +396,7 @@ const initHomeMainApp = function(){
             <div id="homeAppBannerContainer">
                 <div id="homeAppBannerVideoDiv">
                     <video preload="auto" autoplay muted playsinline loop @loadeddata="updateVideoLoadProgress">
-                        <source src="/images/splashscreen.mp4" type="video/mp4" />
+                        <source src="./images/splashscreen.mp4" type="video/mp4" />
                     </video>
                 </div>
                 <div id="homeAppBannerLogo">
