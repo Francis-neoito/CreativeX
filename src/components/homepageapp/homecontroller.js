@@ -159,7 +159,7 @@ const initHomeMainApp = function(){
                 app._props.loadPercentage +=20;
                 document.dispatchEvent(updateProgressEvent);
                 this.controls = this.viewer.scene.activeCamera.controls;
-                setTimeout(this.startRotate, 3000);
+                setTimeout(this.startRotate, 6000);
             },
             startRotate(){
                 this.controls.autoRotate = true;
@@ -186,6 +186,7 @@ const initHomeMainApp = function(){
             };
         },
         created(){
+            window.addEventListener( 'resize', this.updateCanvasOnResize, false );
         },
         mounted(){
             this.dom = document.getElementById(this.identifier);
@@ -199,6 +200,15 @@ const initHomeMainApp = function(){
             });
         },
         methods:{
+            updateCanvasOnResize(){
+                if(this.renderer != null){
+                    this.canvasWidth = this.dom.getBoundingClientRect().width;
+                    this.canvasHeight = this.dom.getBoundingClientRect().height;
+                    this.camera.aspect = this.canvasWidth/this.canvasHeight
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize( this.canvasWidth, this.canvasHeight );
+                }
+            },
             redirectDemo(){
             },
             async initPatternEngine(){
@@ -260,7 +270,6 @@ const initHomeMainApp = function(){
                 const intersects = this.raycaster.intersectObjects( this.scene.children );
                 if ( intersects.length > 0 ) {
                     const intersection = intersects[0];
-                    console.log(intersection);
                     const faceIndex = intersection.point;
                     const x = this.geometry.geometry.attributes.position.getX(faceIndex);
                     const y = this.geometry.geometry.attributes.position.getY(faceIndex);
@@ -362,8 +371,60 @@ const initHomeMainApp = function(){
         },
         mounted(){
             this.dom = document.getElementById('homeAppBannerCanvaDiv');
+            const beyondPath = document.getElementById('beyondPath');
+            const beyond = document.getElementById('beyondPathSvg');
+            const beyondPathLength = beyondPath.getTotalLength();
+            beyondPath.style.strokeDasharray = beyondPathLength;
+            beyondPath.style.strokeDashoffset = beyondPathLength;
+
+            const visionPath = document.getElementById('visionPath');
+            const vision = document.getElementById('visionPathSvg');
+            const visionPathLength = visionPath.getTotalLength();
+            visionPath.style.strokeDasharray = visionPathLength;
+            visionPath.style.strokeDashoffset = visionPathLength;
+
+            const reachPath = document.getElementById('reachPath');
+            const reach = document.getElementById('reachPathSvg');
+            const reachPathLength = reachPath.getTotalLength();
+            reachPath.style.strokeDasharray = reachPathLength;
+            reachPath.style.strokeDashoffset = reachPathLength;
+            let options = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            let observer = new IntersectionObserver(this.cbTextAppeared, options);
+            observer.observe(document.getElementById('typog1'));
+            observer.observe(document.getElementById('typog2'));
+            observer.observe(document.getElementById('typog3'));
+            observer.observe(document.getElementById('typog4'));
+            window.addEventListener("scroll",(e)=>{
+                const beyondScrollPercentage = (document.documentElement.scrollTop - beyond.getBoundingClientRect().top - beyond.getBoundingClientRect().height/2)/(beyond.getBoundingClientRect().height);
+                const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage/2);
+                beyondPath.style.strokeDashoffset = Math.max(0,beyondPathLength - beyondDrawLength);
+
+                const visionScrollPercentage = (document.documentElement.scrollTop - vision.getBoundingClientRect().top - vision.getBoundingClientRect().height)/(vision.getBoundingClientRect().height);
+                const visionDrawLength = visionPathLength * Math.max(0,visionScrollPercentage/3);
+                visionPath.style.strokeDashoffset = Math.max(0,visionPathLength - visionDrawLength);
+
+                const reachScrollPercentage = (document.documentElement.scrollTop - reach.getBoundingClientRect().top - reach.getBoundingClientRect().height*3)/(reach.getBoundingClientRect().height);
+                const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage);
+                reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
+            });
         },
         methods:{
+            cbTextAppeared(entries, observer){
+                entries.forEach(entry => {
+                    if (
+                        entry &&
+                        entry.isIntersecting &&
+                        entry.intersectionRatio >= 0.1
+                      ){
+                    console.log(entry.target);
+                    entry.target.classList.add('lineUp');
+                      }
+                  });
+            },
             updateVideoLoadProgress(){
                 app._props.loadPercentage += 20;
                 document.dispatchEvent(updateProgressEvent);
@@ -426,6 +487,37 @@ const initHomeMainApp = function(){
                          of your projects from scratch to get sophisticated and unique web experience for your customers.</p>
                     </div>
                 </div>
+                <div id="svgPathContainers">
+                    <svg id="beyondPathSvg" viewBox="0 0 1908 888" preserveAscpectRatio="xMidYMax meet">
+                        <path id="beyondPath" fill="none" stroke="#81c55c" stroke-width="25"
+                        d="M -15.00,145.50 C -15.00,145.50 88.50,115.50 165.00,148.50
+                            241.50,181.50 309.00,219.00 361.50,274.50 414.00,330.00 507.00,445.50 528.00,550.50
+                            549.00,655.50 579.00,708.00 645.00,711.00 711.00,714.00 807.00,664.50 823.50,586.50
+                            840.00,508.50 817.50,447.00 810.00,381.00 802.50,315.00 841.50,264.00 883.50,249.00
+                            925.50,234.00 1026.00,234.00 1083.00,271.50 1140.00,309.00 1198.50,354.00 1225.50,420.00
+                            1252.50,486.00 1263.00,613.50 1237.50,690.00 1212.00,766.50 1149.00,792.00 1116.00,781.50
+                            1083.00,771.00 1060.50,757.50 1051.50,727.50 1042.50,697.50 1062.00,670.50 1092.00,670.50
+                            1122.00,670.50 1195.50,687.00 1270.50,748.50 1345.50,810.00 1438.50,831.00 1516.50,828.00
+                            1594.50,825.00 1735.50,808.50 1789.50,786.00 1843.50,763.50 1923.00,693.00 1923.00,693.00" />
+                    </svg>
+                    <svg id="visionPathSvg" viewBox="0 0 1912 1016" preserveAscpectRatio="xMidYMax meet">
+                        <path id="visionPath" fill="none" stroke="#1aaaff" stroke-width="25"
+                            d="M -18.00,195.00 C -18.00,195.00 79.50,295.50 190.50,327.00
+                                301.50,358.50 552.00,405.00 820.50,325.50 1089.00,246.00 1107.00,175.50 1101.00,123.00 1095.00,70.50 1059.00,45.00 997.50,46.50
+                                936.00,48.00 844.50,72.00 816.00,117.00 787.50,162.00 736.50,280.50 772.50,397.50
+                                808.50,514.50 892.50,601.50 943.50,631.50 994.50,661.50 1021.50,675.00 1086.00,690.00
+                                1150.50,705.00 1195.50,723.00 1227.00,775.50 1258.50,828.00 1236.00,874.50 1285.50,919.50
+                                1335.00,964.50 1365.00,979.50 1455.00,985.50 1545.00,991.50 1564.50,1000.50 1665.00,978.00
+                                1765.50,955.50 1947.00,870.00 1954.50,861.00" />
+                    </svg>
+                    <svg id="reachPathSvg" viewBox="0 0 1912 1016" preserveAscpectRatio="xMidYMax meet">
+                        <path id="reachPath" fill="none" stroke="#ff4242" stroke-width="25"
+                        d="M 1938.00,54.00 C 1938.00,54.00 1857.00,73.50 1801.50,103.50
+                        1746.00,133.50 1411.50,283.50 1207.50,280.50 1003.50,277.50 813.00,265.50 744.00,304.50
+                        675.00,343.50 583.50,424.50 480.00,432.00 376.50,439.50 130.50,364.50 46.50,528.00
+                        -37.50,691.50 -48.00,703.50 -112.50,717.00" />
+                      </svg>
+                </div>
                 <p class="projectSubTitle">We build epic realtime interactive experience to blow people's mind.</p>
                 <div class="grid">
                     <jewelleryframe :identifier="'jewelleryViewer1'"></jewelleryframe>
@@ -436,7 +528,7 @@ const initHomeMainApp = function(){
                 <div class="grid" style="margin-top:-10rem">
                     <realestateframe :identifier="'jewelleryViewer3'"></realestateframe>
                     <div class="typog" id="typog3">Within</div>
-                    <div class="typog" id="typog2">Reach.</div>
+                    <div class="typog" id="typog4">Reach.</div>
                     <patternengineframe :identifier="'jewelleryViewer4'"></patternengineframe>
                 </div>
                 <div id="footerContainer">

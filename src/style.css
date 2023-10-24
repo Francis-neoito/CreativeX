@@ -239,13 +239,16 @@ body{
   font-size: 7rem;
 }
 .projectSubTitle{
-  font-size: 3.75rem;
+  position: relative;
+  font-size: 3.85rem;
   margin-left: 2rem;
   margin-right: 2rem;
   color: #131313;
   font-family: Arial, sans-serif;
   padding-bottom: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 15vh;
+  margin-top: 20vh;
+  z-index: 10;
 }
 .jewelleryContainer{
   display: flex;
@@ -260,7 +263,7 @@ body{
 .jewelleryViewer{
   background-color: #2a2a2a;
   height: 100%;
-  width: 50%;
+  width: 56%;
   border-radius: 1rem 0rem 0rem 1rem;
   /* box-shadow: 0 3px 12px rgba(0, 0, 0, 0.221), 0 3px 12px rgba(0, 0, 0, 0.307); */
 }
@@ -268,7 +271,7 @@ body{
   position: relative;
   padding-left: 2rem;
   padding-right: 2rem;
-  width: 50%;
+  width: 44%;
 }
 .demoSectionHeader{
   font-size: 3rem;
@@ -302,40 +305,104 @@ body{
   box-shadow: 0 12px 24px rgba(0,0,0,0.25), 0 8px 8px rgba(0,0,0,0.22);
   letter-spacing: 0.3rem;
 }
+
+#beyondPathSvg{
+  width: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+#visionPathSvg{
+  width: 100%;
+  overflow: hidden;
+  z-index: 0;
+  margin-top: 12%;
+}
+#reachPathSvg{
+  width: 100%;
+  overflow: hidden;
+  z-index: 0;
+  margin-top: -10vh;
+}
+#svgPathContainers{
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  z-index: 0;
+}
 .grid{
   position: relative;
   display: flex;
   flex-direction: row;
-  /* height: 80vh; */
-  width: calc(100% - 2rem);
+  width: calc(94%);
   justify-content: center;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-left: 3%;
+  padding-right: 3%;
   margin-bottom: 2rem;
+  z-index: 10;
 }
 
 #typog1{
   top: 20%;
   right: 4rem;
-}
-#typog3{
-  top: 20%;
-  right: 4rem;
+  /* background-image: linear-gradient(
+    -225deg,
+    #231557 0%,
+    #44107a 29%,
+    #ff1361 67%,
+    #fff800 100%
+  ); */
+  background-image: linear-gradient(
+    144deg,#bbe955 0%, #1d982d 100%);
 }
 #typog2{
   bottom: 20%;
   left: 4rem;
+  background-image: linear-gradient(
+    220deg,#00a8ff 0%, #00519e 100%);
+}
+#typog3{
+  top: 20%;
+  right: 4rem;
+  background-image: linear-gradient(
+    289deg,#ff2525 0%, #0083ff 100%)
 }
 #typog4{
   bottom: 20%;
   left: 4rem;
+  background-image: linear-gradient(
+    132deg,#ff62ad 0%, #b80000 100%)
 }
 .typog{
   position: absolute;
   font-size: 10rem;
   font-family: Roboto;
   color: #242424;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
 }
+.lineUp {
+  animation: 2s anim-lineUp ease-out forwards;
+}
+@keyframes anim-lineUp {
+  0% {
+    opacity: 0;
+    transform: translateY(80%);
+  }
+  20% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+}
+
 #footerContainer{
   background-color: #e8e5dc;
   width: 100%;
