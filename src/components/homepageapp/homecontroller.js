@@ -489,7 +489,13 @@ const initHomeMainApp = function(){
                 </div>
                 <div id="svgPathContainers">
                     <svg id="beyondPathSvg" viewBox="0 0 1908 888" preserveAscpectRatio="xMidYMax meet">
-                        <path id="beyondPath" fill="none" stroke="#81c55c" stroke-width="25"
+                        <defs>
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%"   stop-color="#81c55c"/>
+                        <stop offset="100%" stop-color="#bbe955"/>
+                        </linearGradient>
+                        </defs>
+                        <path id="beyondPath" fill="none" stroke="url(#gradient1)" stroke-width="25"
                         d="M -15.00,145.50 C -15.00,145.50 88.50,115.50 165.00,148.50
                             241.50,181.50 309.00,219.00 361.50,274.50 414.00,330.00 507.00,445.50 528.00,550.50
                             549.00,655.50 579.00,708.00 645.00,711.00 711.00,714.00 807.00,664.50 823.50,586.50
@@ -501,7 +507,14 @@ const initHomeMainApp = function(){
                             1594.50,825.00 1735.50,808.50 1789.50,786.00 1843.50,763.50 1923.00,693.00 1923.00,693.00" />
                     </svg>
                     <svg id="visionPathSvg" viewBox="0 0 1912 1016" preserveAscpectRatio="xMidYMax meet">
-                        <path id="visionPath" fill="none" stroke="#1aaaff" stroke-width="25"
+                        <defs>
+                        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%"   stop-color="#1aaaff"/>
+                        <stop offset="50%"   stop-color="#1aaaff"/>
+                        <stop offset="100%" stop-color="#ff2525"/>
+                        </linearGradient>
+                        </defs>
+                        <path id="visionPath" fill="none" stroke="url(#gradient2)" stroke-width="25"
                             d="M -18.00,195.00 C -18.00,195.00 79.50,295.50 190.50,327.00
                                 301.50,358.50 552.00,405.00 820.50,325.50 1089.00,246.00 1107.00,175.50 1101.00,123.00 1095.00,70.50 1059.00,45.00 997.50,46.50
                                 936.00,48.00 844.50,72.00 816.00,117.00 787.50,162.00 736.50,280.50 772.50,397.50
