@@ -6,7 +6,8 @@ import * as WEBGI from 'webgi';
 const updateProgressEvent = new Event('updateprogress');
 const clock = new THREE.Clock();
 let frameRatedelta = 0;
-
+//advance offset for monitoring renderer's visibility
+let rootMarginValue = Math.floor(screen.height*0.20);
 const initHomeMainApp = function(){
     const app = createApp(
         {props:[]},
@@ -51,10 +52,9 @@ const initHomeMainApp = function(){
                 document.dispatchEvent(updateProgressEvent);
                 this.controls = this.viewer.scene.activeCamera.controls;
                 setTimeout(this.suspendViewer, 2000);
-                // setTimeout(this.startRotate, 3000);
                 let observer = new IntersectionObserver(this.manageRendererByVisibility,{
                     root: null,
-                    rootMargin: '100px',
+                    rootMargin: rootMarginValue+'px 0px',
                     threshold: 0.1,
                 });
                 observer.observe(document.getElementById(this.identifier+''));
@@ -132,11 +132,10 @@ const initHomeMainApp = function(){
                 app._props.loadPercentage +=20;
                 document.dispatchEvent(updateProgressEvent);
                 this.controls = this.viewer.scene.activeCamera.controls;
-                // setTimeout(this.startRotate, 3000);
                 setTimeout(this.suspendViewer, 2000);
                 let observer = new IntersectionObserver(this.manageRendererByVisibility,{
                     root: null,
-                    rootMargin: '100px',
+                    rootMargin: rootMarginValue+'px 0px',
                     threshold: 0.1,
                 });
                 observer.observe(document.getElementById(this.identifier+''));
@@ -214,10 +213,9 @@ const initHomeMainApp = function(){
                 document.dispatchEvent(updateProgressEvent);
                 this.controls = this.viewer.scene.activeCamera.controls;
                 setTimeout(this.suspendViewer, 2000);
-                // setTimeout(this.startRotate, 3000);
                 let observer = new IntersectionObserver(this.manageRendererByVisibility,{
                     root: null,
-                    rootMargin: '100px',
+                    rootMargin: rootMarginValue+'px 0px',
                     threshold: 0.1,
                 });
                 observer.observe(document.getElementById(this.identifier+''));
@@ -324,7 +322,7 @@ const initHomeMainApp = function(){
                 setTimeout(this.suspendViewer, 2000);
                 let observer = new IntersectionObserver(this.manageRendererByVisibility,{
                     root: null,
-                    rootMargin: '100px',
+                    rootMargin: rootMarginValue+'px 0px',
                     threshold: 0.1,
                 });
                 observer.observe(document.getElementById(this.identifier+''));
@@ -430,7 +428,6 @@ const initHomeMainApp = function(){
             },
             manageRendererByVisibility(entries, observer){
                 entries.forEach(entry => {
-                    console.log(entry);
                     if (
                         entry &&
                         entry.isIntersecting &&
@@ -512,7 +509,7 @@ const initHomeMainApp = function(){
             }
             let options = {
                 root: null,
-                rootMargin: '100px',
+                rootMargin: '0px 0px',
                 threshold: 0.1
             };
             let observer = new IntersectionObserver(this.cbTextAppeared, options);
@@ -521,21 +518,35 @@ const initHomeMainApp = function(){
             observer.observe(document.getElementById('typog3'));
             observer.observe(document.getElementById('typog4'));
             window.addEventListener("scroll",(e)=>{
-                const beyondScrollPercentage = (document.documentElement.scrollTop - beyond.getBoundingClientRect().top - beyond.getBoundingClientRect().height)/(beyond.getBoundingClientRect().height);
-                const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage/2);
-                beyondPath.style.strokeDashoffset = Math.max(0,beyondPathLength - beyondDrawLength);
-
-                const visionScrollPercentage = (document.documentElement.scrollTop - vision.getBoundingClientRect().top - vision.getBoundingClientRect().height)/(vision.getBoundingClientRect().height);
-                const visionDrawLength = visionPathLength * Math.max(0,visionScrollPercentage/3);
-                visionPath.style.strokeDashoffset = Math.max(0,visionPathLength - visionDrawLength);
-
-                const reachScrollPercentage = (document.documentElement.scrollTop - reach.getBoundingClientRect().top - reach.getBoundingClientRect().height*3)/(reach.getBoundingClientRect().height);
-                const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage);
-                reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
                 if(!this.bigCanvas){
-                    const endScrollPercentage = (document.documentElement.scrollTop - end.getBoundingClientRect().top - end.getBoundingClientRect().height*4)/(end.getBoundingClientRect().height);
+                    const beyondScrollPercentage = (document.documentElement.scrollTop -beyond.getBoundingClientRect().y - screen.height)/beyond.getBoundingClientRect().height;
+                    const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage/2);
+                    beyondPath.style.strokeDashoffset = Math.max(0,beyondPathLength - beyondDrawLength);
+
+                    const visionScrollPercentage = (1-(vision.getBoundingClientRect().y - screen.height*0.8))/vision.getBoundingClientRect().height;
+                    const visionDrawLength = visionPathLength * Math.max(0,visionScrollPercentage);
+                    visionPath.style.strokeDashoffset = Math.max(0,visionPathLength - visionDrawLength);
+
+                    const reachScrollPercentage = (1-(reach.getBoundingClientRect().y - screen.height*0.8))/reach.getBoundingClientRect().height;
+                    const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage);
+                    reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
+
+                    const endScrollPercentage = (1-(end.getBoundingClientRect().y - screen.height*0.8))/end.getBoundingClientRect().height;
                     const endDrawLength = endPathLength * Math.max(0,endScrollPercentage);
                     endPath.style.strokeDashoffset = Math.max(0,endPathLength - endDrawLength);
+                    
+                }else{
+                    const beyondScrollPercentage = (document.documentElement.scrollTop - beyond.getBoundingClientRect().top - beyond.getBoundingClientRect().height)/(beyond.getBoundingClientRect().height);
+                    const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage/2);
+                    beyondPath.style.strokeDashoffset = Math.max(0,beyondPathLength - beyondDrawLength);
+    
+                    const visionScrollPercentage = (document.documentElement.scrollTop - vision.getBoundingClientRect().top - vision.getBoundingClientRect().height)/(vision.getBoundingClientRect().height);
+                    const visionDrawLength = visionPathLength * Math.max(0,visionScrollPercentage/3);
+                    visionPath.style.strokeDashoffset = Math.max(0,visionPathLength - visionDrawLength);
+
+                    const reachScrollPercentage = (document.documentElement.scrollTop - reach.getBoundingClientRect().top - reach.getBoundingClientRect().height*3)/(reach.getBoundingClientRect().height);
+                    const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage);
+                    reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
                 }
             });
         },
@@ -733,14 +744,14 @@ const initHomeMainApp = function(){
                         </div>
                     </div>
                     <div id="svgPathContainers">
-                        <svg id="beyondPathSvg" viewBox="0 0 386 650" preserveAscpectRatio="xMidYMax meet">
+                        <svg id="beyondPathSvg" viewBox="0 150 430 470" preserveAscpectRatio="xMidYMax meet">
                             <defs>
                             <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
                             <stop offset="0%"   stop-color="#81c55c"/>
                             <stop offset="100%" stop-color="#bbe955"/>
                             </linearGradient>
                             </defs>
-                            <path id="beyondPath" fill="none" stroke="url(#gradient1)" stroke-width="10"
+                            <path id="beyondPath" fill="none" stroke="url(#gradient1)" stroke-width="15"
                             d="M -15.00,164.00
                             C -15.00,164.00 150.00,141.00 264.00,285.00
                             378.00,429.00 248.00,466.00 232.00,468.00
@@ -750,8 +761,8 @@ const initHomeMainApp = function(){
                             384.00,376.00 367.00,409.00 383.00,435.00
                             399.00,461.00 426.00,463.00 430.00,464.00" />
                         </svg>
-                        <svg id="visionPathSvg" viewBox="0 0 387 787" preserveAscpectRatio="xMidYMax meet">
-                            <path id="visionPath" fill="none" stroke="#1aaaff"  stroke-width="10"
+                        <svg id="visionPathSvg" viewBox="0 200 387 500" preserveAscpectRatio="xMidYMax meet">
+                            <path id="visionPath" fill="none" stroke="#1aaaff"  stroke-width="15"
                             d="M 396.00,221.00
                             C 394.00,221.00 356.00,220.00 315.00,259.00
                             274.00,298.00 253.00,359.00 218.00,378.00
@@ -763,7 +774,7 @@ const initHomeMainApp = function(){
                             277.00,498.00 350.00,498.00 369.00,520.00
                             388.00,542.00 393.00,577.00 399.00,584.00M 504.00,446.00" />
                         </svg>
-                        <svg id="reachPathSvg" viewBox="0 0 387 787" preserveAscpectRatio="xMidYMax meet">
+                        <svg id="reachPathSvg" viewBox="0 200 387 510" preserveAscpectRatio="xMidYMax meet">
                             <defs>
                             <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
                             <stop offset="0%"   stop-color="#1aaaff"/>
@@ -771,7 +782,7 @@ const initHomeMainApp = function(){
                             <stop offset="100%" stop-color="#f525f5"/>
                             </linearGradient>
                             </defs>
-                            <path id="reachPath" fill="none" stroke="url(#gradient2)" stroke-width="10"
+                            <path id="reachPath" fill="none" stroke="url(#gradient2)" stroke-width="15"
                             d="M -11.00,203.00
                             C -11.00,203.00 -21.00,299.00 100.00,364.00
                             221.00,429.00 245.00,440.00 277.00,449.00
@@ -784,8 +795,8 @@ const initHomeMainApp = function(){
                             127.00,567.00 39.00,654.00 15.00,666.00
                             -9.00,678.00 -46.00,703.00 -46.00,703.00" />
                         </svg>
-                        <svg id="endPathSvg" viewBox="0 0 387 787" preserveAscpectRatio="xMidYMax meet">
-                        <path id="endPath" fill="none" stroke="#ff4242" stroke-width="10"
+                        <svg id="endPathSvg" viewBox="0 190 387 400" preserveAscpectRatio="xMidYMax meet">
+                        <path id="endPath" fill="none" stroke="#ff4242" stroke-width="15"
                         d="M -9.00,193.00
                         C -9.00,193.00 9.00,280.00 32.00,313.00
                             55.00,346.00 76.00,362.00 83.00,365.00

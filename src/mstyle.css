@@ -329,24 +329,26 @@ body{
   width: 100%;
   overflow: hidden;
   z-index: 0;
+  margin-top: 58vh;
 }
 #reachPathSvg{
   width: 100%;
   overflow: hidden;
   z-index: 0;
-  margin-top: 10vh;
+  margin-top: 65vh;
 }
 #endPathSvg{
   width: 100%;
   overflow: hidden;
   z-index: 0;
+  margin-top: 65vh;
 }
 #svgPathContainers{
   position: absolute;
   overflow: hidden;
   width: 100%;
   z-index: 0;
-  margin-top: 41vh;
+  margin-top: 62vh;
 }
 .grid{
   position: relative;
@@ -388,8 +390,8 @@ body{
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   opacity: 0;
-  margin-bottom: 3rem;
-  margin-top: 3rem;
+  margin-bottom: 15vh;
+  margin-top: 15vh;
   width: 100%;
 }
 .lineUp {
