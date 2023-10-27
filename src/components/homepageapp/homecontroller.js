@@ -48,10 +48,11 @@ const initHomeMainApp = function(){
                 this.viewer.renderer.refreshPipeline();
                 const options = {autoScale: false}
                 const assets = await manager.addFromPath("./objects/jewelleryDemo.glb", options);
+                this.controls = this.viewer.scene.activeCamera.controls;
+                this.controls.autoRotate = false;
                 app._props.loadPercentage +=20;
                 document.dispatchEvent(updateProgressEvent);
-                this.controls = this.viewer.scene.activeCamera.controls;
-                setTimeout(this.suspendViewer, 2000);
+                setTimeout(this.suspendViewer, 1200);
                 let observer = new IntersectionObserver(this.manageRendererByVisibility,{
                     root: null,
                     rootMargin: rootMarginValue+'px 0px',
@@ -129,10 +130,11 @@ const initHomeMainApp = function(){
                 this.viewer.renderer.refreshPipeline();
                 const options = {autoScale: false}
                 const assets = await manager.addFromPath("./objects/pr1.glb", options);
+                this.controls = this.viewer.scene.activeCamera.controls;
+                this.controls.autoRotate = false;
                 app._props.loadPercentage +=20;
                 document.dispatchEvent(updateProgressEvent);
-                this.controls = this.viewer.scene.activeCamera.controls;
-                setTimeout(this.suspendViewer, 2000);
+                setTimeout(this.suspendViewer, 1200);
                 let observer = new IntersectionObserver(this.manageRendererByVisibility,{
                     root: null,
                     rootMargin: rootMarginValue+'px 0px',
@@ -209,10 +211,11 @@ const initHomeMainApp = function(){
                 this.viewer.renderer.refreshPipeline();
                 const options = {autoScale: false}
                 const assets = await manager.addFromPath("./objects/realestate.glb", options);
+                this.controls = this.viewer.scene.activeCamera.controls;
+                this.controls.autoRotate = false;
                 app._props.loadPercentage +=20;
                 document.dispatchEvent(updateProgressEvent);
-                this.controls = this.viewer.scene.activeCamera.controls;
-                setTimeout(this.suspendViewer, 2000);
+                setTimeout(this.suspendViewer, 1200);
                 let observer = new IntersectionObserver(this.manageRendererByVisibility,{
                     root: null,
                     rootMargin: rootMarginValue+'px 0px',
@@ -319,7 +322,7 @@ const initHomeMainApp = function(){
                 this.startRendering();
                 app._props.loadPercentage += 10;
                 document.dispatchEvent(updateProgressEvent);
-                setTimeout(this.suspendViewer, 2000);
+                setTimeout(this.suspendViewer, 1200);
                 let observer = new IntersectionObserver(this.manageRendererByVisibility,{
                     root: null,
                     rootMargin: rootMarginValue+'px 0px',
