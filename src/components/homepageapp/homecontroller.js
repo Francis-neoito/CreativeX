@@ -41,7 +41,7 @@ const initHomeMainApp = function(){
                   }) ;
                 const manager = new WEBGI.AssetManagerPlugin();
                 await this.viewer.addPlugin(manager);
-                this.viewer.renderer.displayCanvasScaling = Math.min(window.devicePixelRatio, 2);
+                this.viewer.renderer.displayCanvasScaling = Math.min(window.devicePixelRatio, 1.5);
                 await WEBGI.addBasePlugins(this.viewer);
                 const camViews = this.viewer.getPlugin(WEBGI.CameraViewPlugin);
                 this.viewer.renderer.refreshPipeline();
@@ -50,12 +50,39 @@ const initHomeMainApp = function(){
                 app._props.loadPercentage +=20;
                 document.dispatchEvent(updateProgressEvent);
                 this.controls = this.viewer.scene.activeCamera.controls;
-                setTimeout(this.startRotate, 3000);
+                setTimeout(this.suspendViewer, 2000);
+                // setTimeout(this.startRotate, 3000);
+                let observer = new IntersectionObserver(this.manageRendererByVisibility,{
+                    root: null,
+                    rootMargin: '100px',
+                    threshold: 0.1,
+                });
+                observer.observe(document.getElementById(this.identifier+''));
+            },
+            manageRendererByVisibility(entries, observer){
+                entries.forEach(entry => {
+                    if (
+                        entry &&
+                        entry.isIntersecting &&
+                        entry.intersectionRatio >= 0.1
+                      ){
+                    this.resumeViewer();
+                    this.startRotate();
+                      }else{
+                        this.suspendViewer();
+                      }
+                  });
             },
             startRotate(){
                 this.controls.autoRotate = true;
                 this.controls.autoRotateSpeed = 0.8;
             },
+            suspendViewer(){
+                this.viewer.enabled=false;
+            },
+            resumeViewer(){
+                this.viewer.enabled=true;
+            }
         },
         template:`
             <div class="jewelleryContainer">
@@ -96,22 +123,48 @@ const initHomeMainApp = function(){
                   }) ;
                 const manager = new WEBGI.AssetManagerPlugin();
                 await this.viewer.addPlugin(manager);
-                this.viewer.renderer.displayCanvasScaling = Math.min(window.devicePixelRatio, 2);
+                this.viewer.renderer.displayCanvasScaling = Math.min(window.devicePixelRatio, 1.5);
                 await WEBGI.addBasePlugins(this.viewer);
                 const camViews = this.viewer.getPlugin(WEBGI.CameraViewPlugin);
                 this.viewer.renderer.refreshPipeline();
-                // this.viewer.getPlugin(WEBGI.TonemapPlugin).config.clipBackground = true;
                 const options = {autoScale: false}
                 const assets = await manager.addFromPath("./objects/pr1.glb", options);
                 app._props.loadPercentage +=20;
                 document.dispatchEvent(updateProgressEvent);
                 this.controls = this.viewer.scene.activeCamera.controls;
-                setTimeout(this.startRotate, 3000);
+                // setTimeout(this.startRotate, 3000);
+                setTimeout(this.suspendViewer, 2000);
+                let observer = new IntersectionObserver(this.manageRendererByVisibility,{
+                    root: null,
+                    rootMargin: '100px',
+                    threshold: 0.1,
+                });
+                observer.observe(document.getElementById(this.identifier+''));
+            },
+            manageRendererByVisibility(entries, observer){
+                entries.forEach(entry => {
+                    if (
+                        entry &&
+                        entry.isIntersecting &&
+                        entry.intersectionRatio >= 0.1
+                      ){
+                        this.resumeViewer();
+                        this.startRotate();
+                      }else{
+                        this.suspendViewer();
+                      }
+                  });
             },
             startRotate(){
                 this.controls.autoRotate = true;
-                this.controls.autoRotateSpeed = 1.5;
+                this.controls.autoRotateSpeed = 0.8;
             },
+            suspendViewer(){
+                this.viewer.enabled=false;
+            },
+            resumeViewer(){
+                this.viewer.enabled=true;
+            }
         },
         template:`
             <div class="jewelleryContainer" :style="{'margin-top':margintop}">
@@ -151,7 +204,7 @@ const initHomeMainApp = function(){
                   }) ;
                 const manager = new WEBGI.AssetManagerPlugin();
                 await this.viewer.addPlugin(manager);
-                this.viewer.renderer.displayCanvasScaling = Math.min(window.devicePixelRatio, 2);
+                this.viewer.renderer.displayCanvasScaling = Math.min(window.devicePixelRatio, 1.5);
                 await WEBGI.addBasePlugins(this.viewer);
                 const camViews = this.viewer.getPlugin(WEBGI.CameraViewPlugin);
                 this.viewer.renderer.refreshPipeline();
@@ -160,12 +213,39 @@ const initHomeMainApp = function(){
                 app._props.loadPercentage +=20;
                 document.dispatchEvent(updateProgressEvent);
                 this.controls = this.viewer.scene.activeCamera.controls;
-                setTimeout(this.startRotate, 6000);
+                setTimeout(this.suspendViewer, 2000);
+                // setTimeout(this.startRotate, 3000);
+                let observer = new IntersectionObserver(this.manageRendererByVisibility,{
+                    root: null,
+                    rootMargin: '100px',
+                    threshold: 0.1,
+                });
+                observer.observe(document.getElementById(this.identifier+''));
+            },
+            manageRendererByVisibility(entries, observer){
+                entries.forEach(entry => {
+                    if (
+                        entry &&
+                        entry.isIntersecting &&
+                        entry.intersectionRatio >= 0.1
+                      ){
+                        this.resumeViewer();
+                        this.startRotate();
+                      }else{
+                        this.suspendViewer();
+                      }
+                  });
             },
             startRotate(){
                 this.controls.autoRotate = true;
-                this.controls.autoRotateSpeed = 1.5;
+                this.controls.autoRotateSpeed = 0.8;
             },
+            suspendViewer(){
+                this.viewer.enabled=false;
+            },
+            resumeViewer(){
+                this.viewer.enabled=true;
+            }
         },
         template:`
             <div class="jewelleryContainer">
@@ -241,6 +321,13 @@ const initHomeMainApp = function(){
                 this.startRendering();
                 app._props.loadPercentage += 10;
                 document.dispatchEvent(updateProgressEvent);
+                setTimeout(this.suspendViewer, 2000);
+                let observer = new IntersectionObserver(this.manageRendererByVisibility,{
+                    root: null,
+                    rootMargin: '100px',
+                    threshold: 0.1,
+                });
+                observer.observe(document.getElementById(this.identifier+''));
             },
             createGeometry(){
                 const positions = [];
@@ -327,10 +414,10 @@ const initHomeMainApp = function(){
                   }
             },
             tick(){
-                if (frameRatedelta * 1000 < 33) {
-                      frameRatedelta += clock.getDelta();
-                      return;
-                }
+                // if (frameRatedelta * 1000 < 33) {
+                //       frameRatedelta += clock.getDelta();
+                //       return;
+                // }
                 this.scanner(this.geometry.geometry.attributes);
                 this.geometry.geometry.attributes.color.needsUpdate = true;
             },
@@ -340,6 +427,26 @@ const initHomeMainApp = function(){
             animate(){
                 this.tick();
 				this.renderer.render( this.scene, this.camera );
+            },
+            manageRendererByVisibility(entries, observer){
+                entries.forEach(entry => {
+                    console.log(entry);
+                    if (
+                        entry &&
+                        entry.isIntersecting &&
+                        entry.intersectionRatio >= 0
+                    ){
+                        this.resumeViewer();
+                    }else{
+                        this.suspendViewer();
+                    }
+                });
+            },
+            suspendViewer(){
+                this.renderer.setAnimationLoop(null);
+            },
+            resumeViewer(){
+                this.renderer.setAnimationLoop(this.animate);
             }
         },
         template:`
@@ -405,7 +512,7 @@ const initHomeMainApp = function(){
             }
             let options = {
                 root: null,
-                rootMargin: '0px',
+                rootMargin: '100px',
                 threshold: 0.1
             };
             let observer = new IntersectionObserver(this.cbTextAppeared, options);
