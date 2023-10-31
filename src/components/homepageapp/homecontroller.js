@@ -661,7 +661,7 @@ const initHomeMainApp = function(){
                 this.pointLight.intensity = THREE.MathUtils.mapLinear( valNorm, 0, 1, 0.9, 1.5 );
 
                 const Gloader = new GLTFLoader();
-                Gloader.load( './src/assets/Flamingo.glb', this.gltFLoaded);
+                Gloader.load( './objects/Flamingo.glb', this.gltFLoaded);
                 this.animate();
             },
             gltFLoaded(gltf){
