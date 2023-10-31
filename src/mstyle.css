@@ -8,6 +8,13 @@ html,body{
 body{
   overflow: hidden;
 }
+#mainBackgroundCanvas{
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  filter: blur(2px);
+}
 #landscapeStopperDiv{
   position: fixed;
   top: 0;
@@ -70,13 +77,12 @@ body{
 .homeAppHeader{
   position: absolute;
   top: 0;
-  height: 4rem;
+  height: 18vh;
   width: 100%;
   z-index: 100;
   display: flex;
   flex-direction: column;
-  background-image: linear-gradient(black 5%,rgba(0, 0, 0, 0.609) 50%, rgba(0, 0, 0, 0.1)100%);
-  box-shadow: 0 0 0.5rem 0.5rem rgba(0, 0, 0, 0.1);
+  background-image: linear-gradient(rgba(4, 10, 0, 0.826) 5%,rgba(0, 23, 1, 0.615) 50%, rgba(0, 15, 1, 0)100%);
 }
 #titleX{
   height: 1.5rem;
@@ -145,7 +151,6 @@ body{
   background-color: #91c274;
 }
 #homeAppBannerContainer{
-  background-color: rgb(5, 5, 18);
   position: absolute;
   top:0;
   height: 100vh;
@@ -162,7 +167,7 @@ body{
 }
 #homeAppBannerLogo{
   position: absolute;
-  top: 28vh;
+  top: 30vh;
   left: 25vw;
   width: 50vw;
   display: flex;
@@ -171,7 +176,7 @@ body{
 }
 #logoTextX{
   color: #6e9d53;
-  font-size: 18rem;
+  font-size: 20rem;
   font-family: sans-serif;
   font-weight: 600;
   text-shadow: 8px 8px 14px #00000046;
@@ -196,6 +201,7 @@ body{
   position: absolute;
   top: 25rem;
   color: #6e9d53;
+  display: none;
 }
 .bannerOptionsButton{
   height: 3rem;

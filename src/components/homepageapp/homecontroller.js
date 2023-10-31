@@ -611,9 +611,11 @@ const initHomeMainApp = function(){
 				this.uniformsNoise = {
 					"time": { value: 1.0 },
 					"scale": { value: new THREE.Vector2( 2.5, 2.5 ) },
-					"offset": { value: new THREE.Vector2( 5, 0 )}
+					"offset": { value: new THREE.Vector2( 0, 0 )}
 				};
-
+                if(!this.bigCanvas){
+                    this.uniformsNoise['scale'].value = new THREE.Vector2(3.5,3.5);
+                }
                 let vertexShader = TerrainVertexShader;
 
                 this.heightMapNoiseShaderMat = new THREE.ShaderMaterial({
@@ -628,14 +630,18 @@ const initHomeMainApp = function(){
 				this.quadTarget = new THREE.Mesh( plane, new THREE.MeshBasicMaterial( { color: 0x000000 } ) );
 				this.quadTarget.position.z = - 500;
 				this.sceneRenderTarget.add( this.quadTarget );
-
-				let geometryTerrain = new THREE.PlaneGeometry( 4000, 4000, 256, 256 );
+                let geometryTerrain;
+                if(this.bigCanvas)
+                    geometryTerrain = new THREE.PlaneGeometry( 4000, 4000, 256, 256 );
+                else
+                    geometryTerrain = new THREE.PlaneGeometry( 4000, 2000, 256, 256 );
 
                 this.disMat = new THREE.MeshStandardMaterial({
                     color : 0x10c010,
                     displacementMap: this.heightMap.texture,
-                    displacementScale: 180,
+                    displacementScale: this.bigCanvas? 180 : 150,
                 });
+
 				terrain = new THREE.Mesh( geometryTerrain, this.disMat );
 				terrain.position.set( 0, 0, 0 );
 				terrain.rotation.x = - Math.PI / 2;
@@ -665,7 +671,15 @@ const initHomeMainApp = function(){
                 this.animate();
             },
             gltFLoaded(gltf){
-                gltf.scene.position.set(-2500,220,0);
+                if(this.bigCanvas){
+                    gltf.scene.position.set(-2500,220,0);   
+                    gltf.scene.scale.set(0.2,0.2,0.2);
+
+                }else{
+                    gltf.scene.position.set(-2500,220,20);
+                    gltf.scene.scale.set(0.1,0.1,0.1);
+                }
+                
                 const color = gltf.scene.children[0].geometry.attributes.color
                 for(let i=0; i<color.count; i++ ){
                     const r = color.getX(i);
@@ -676,7 +690,6 @@ const initHomeMainApp = function(){
                     }
                 }
                 gltf.scene.children[0].geometry.attributes.color.needsUpdate = true;
-                gltf.scene.scale.set(0.2,0.2,0.2);
                 gltf.scene.rotation.y = Math.PI / 2;
                 this.scene.add(gltf.scene);
                 this.birdModel = gltf;
@@ -692,8 +705,8 @@ const initHomeMainApp = function(){
             cloneRandomBirdInstance(){
                 for(let i=0; i<10; i++){
                     const nbird = this.birdModel.scene.clone();
-                    nbird.position.z = (Math.random()*1000)-500;
-                    nbird.position.y = 210 + (Math.random()*50);
+                    nbird.position.z = this.bigCanvas? (Math.random()*1000)-500 :(Math.random()*500)-250;
+                    nbird.position.y = this.bigCanvas? 210 + (Math.random()*50): 180 + (Math.random()*50);
                     nbird.position.x = -3000 - Math.random() * 1000;
                     this.scene.add(nbird);
                     const mixer = new THREE.AnimationMixer(nbird);
@@ -904,11 +917,6 @@ const initHomeMainApp = function(){
                     </nav>
                 </div>
                 <div id="homeAppBannerContainer">
-                    <div id="homeAppBannerVideoDiv">
-                        <video preload="auto" autoplay muted playsinline loop @loadeddata="updateVideoLoadProgress">
-                            <source src="./images/splashscreen.mp4" type="video/mp4" />
-                        </video>
-                    </div>
                     <div id="homeAppBannerLogo">
                         <span id="logoTextX">X</span>
                         <span id="logoTextCreative">CREATIVE</span>
