@@ -2,9 +2,16 @@ import { createApp } from 'vue/dist/vue.esm-bundler.js'
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as WEBGI from 'webgi';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { TerrainFragmentShader, TerrainVertexShader } from './Shaders';
 
 const updateProgressEvent = new Event('updateprogress');
 const clock = new THREE.Clock();
+let terrain;
+let mouseX = 0, mouseY = 0;
+let windowHalfX = window.innerWidth / 2;
+let windowHalfY = window.innerHeight / 2;
+const birds = [];
 let frameRatedelta = 0;
 //advance offset for monitoring renderer's visibility
 let rootMarginValue = Math.floor(screen.height*0.20);
@@ -478,10 +485,24 @@ const initHomeMainApp = function(){
                 if(app._props.loadPercentage >=80){
                     document.body.style.overflow = 'auto';
                     app._props.isLoaded = true;
+                    document.dispatchEvent(new Event("canvasResetSize"));
+                }
+            });
+            document.addEventListener('canvasResetSize',()=>{
+                if(this.backgroundDom!=null && this.renderer!=null){
+                    this.backgroundDom.style.width = '100%';
+                    const width = this.backgroundDom.clientWidth;
+				    const height = this.backgroundDom.clientHeight;
+				if ( this.backgroundDom.width !== width || this.backgroundDom.height !== height ) {
+					this.renderer.setSize( width, height, false );
+				}
                 }
             });
         },
         mounted(){
+            this.backgroundDom = document.getElementById('mainBackgroundCanvas');
+            this.initBackground();
+
             this.dom = document.getElementById('homeAppBannerCanvaDiv');
             const beyondPath = document.getElementById('beyondPath');
             const beyond = document.getElementById('beyondPathSvg');
@@ -554,6 +575,180 @@ const initHomeMainApp = function(){
             });
         },
         methods:{
+            initBackground(){
+                this.mlib = {};
+                this.animDelta = 0;
+                this.animDeltaDir = - 1;
+                this.lightVal = 1;
+                this.lightDir = -1;
+
+                this.sceneRenderTarget = new THREE.Scene();
+				this.cameraOrtho = new THREE.OrthographicCamera( this.backgroundDom.getBoundingClientRect().width / - 2, this.backgroundDom.getBoundingClientRect().width / 2, this.backgroundDom.getBoundingClientRect().height / 2, this.backgroundDom.getBoundingClientRect().height / - 2, - 10000, 10000 );
+				this.cameraOrtho.position.z = 100;
+				this.sceneRenderTarget.add( this.cameraOrtho );
+
+                this.camera = new THREE.PerspectiveCamera(40, this.backgroundDom.getBoundingClientRect().width / this.backgroundDom.getBoundingClientRect().height, 2, 40000 );
+				this.scene = new THREE.Scene();
+				this.scene.background = new THREE.Color( 0xfad1b5 );
+                this.camera.position.set( -2200, 300, 0 );
+                this.camera.lookAt(0,0,0);
+                this.camera.zoom = 1.5;
+				this.scene.fog = new THREE.FogExp2( 0xe0d1b5, 0.0011 );
+                this.scene.add( new THREE.AmbientLight( 0x001111 ) );
+                this.directionalLight = new THREE.DirectionalLight( 0xfff0f0, 1.15 );
+				this.directionalLight.position.set( 500, 2000, 0 );
+				this.scene.add( this.directionalLight );
+				this.pointLight = new THREE.PointLight( 0xff4400, 1.5 );
+				this.pointLight.position.set( 0, 0, 0 );
+				this.scene.add( this.pointLight );
+
+				let rx = 256, ry = 256;
+				let pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat };
+
+                this.heightMap = new THREE.WebGLRenderTarget( rx, ry, pars );
+				this.heightMap.texture.generateMipmaps = false;
+
+				this.uniformsNoise = {
+					"time": { value: 1.0 },
+					"scale": { value: new THREE.Vector2( 2.5, 2.5 ) },
+					"offset": { value: new THREE.Vector2( 5, 0 )}
+				};
+
+                let vertexShader = TerrainVertexShader;
+
+                this.heightMapNoiseShaderMat = new THREE.ShaderMaterial({
+                    uniforms: this.uniformsNoise,
+                    vertexShader: vertexShader,
+                    fragmentShader: TerrainFragmentShader,
+                    lights: false,
+                    fog:true
+                });
+
+				let plane = new THREE.PlaneGeometry( this.backgroundDom.getBoundingClientRect().width, this.backgroundDom.getBoundingClientRect().height);
+				this.quadTarget = new THREE.Mesh( plane, new THREE.MeshBasicMaterial( { color: 0x000000 } ) );
+				this.quadTarget.position.z = - 500;
+				this.sceneRenderTarget.add( this.quadTarget );
+
+				let geometryTerrain = new THREE.PlaneGeometry( 4000, 4000, 256, 256 );
+
+                this.disMat = new THREE.MeshStandardMaterial({
+                    color : 0x10c010,
+                    displacementMap: this.heightMap.texture,
+                    displacementScale: 180,
+                });
+				terrain = new THREE.Mesh( geometryTerrain, this.disMat );
+				terrain.position.set( 0, 0, 0 );
+				terrain.rotation.x = - Math.PI / 2;
+				terrain.visible = true;
+				this.scene.add( terrain );
+
+                this.renderer = new THREE.WebGLRenderer({ canvas: this.backgroundDom});
+				this.renderer.setPixelRatio( window.devicePixelRatio );
+				this.renderer.setSize( this.backgroundDom.getBoundingClientRect().width, this.backgroundDom.getBoundingClientRect().height );
+
+				this.onWindowResize();
+
+				window.addEventListener( 'resize', this.onWindowResize, false );
+
+                let fLow = 0.1, fHigh = 0.8;
+                this.lightVal = THREE.MathUtils.clamp( this.lightVal + 0.5 * clock.getDelta(), fLow, fHigh );
+
+                let valNorm = ( this.lightVal - fLow ) / ( fHigh - fLow );
+
+                this.scene.background.setHSL( 0.1, 0.6, this.lightVal );
+                this.scene.fog.color.setHSL( 0.1, 0.6, this.lightVal );
+                this.directionalLight.intensity = THREE.MathUtils.mapLinear( valNorm, 0, 1, 0.1, 1.5 );
+                this.pointLight.intensity = THREE.MathUtils.mapLinear( valNorm, 0, 1, 0.9, 1.5 );
+
+                const Gloader = new GLTFLoader();
+                Gloader.load( './src/assets/Flamingo.glb', this.gltFLoaded);
+                this.animate();
+            },
+            gltFLoaded(gltf){
+                gltf.scene.position.set(-2500,220,0);
+                const color = gltf.scene.children[0].geometry.attributes.color
+                for(let i=0; i<color.count; i++ ){
+                    const r = color.getX(i);
+                    if(r == 0.7677687406539917){
+                        color.setXYZ(i, ...[0.98,1,0.98]);
+                    }else if(r== 0.06372379511594772){
+                        color.setXYZ(i, ...[0.1,0.2,0.1]);
+                    }
+                }
+                gltf.scene.children[0].geometry.attributes.color.needsUpdate = true;
+                gltf.scene.scale.set(0.2,0.2,0.2);
+                gltf.scene.rotation.y = Math.PI / 2;
+                this.scene.add(gltf.scene);
+                this.birdModel = gltf;
+                this.mixer = new THREE.AnimationMixer( gltf.scene );
+				this.mixer.clipAction( gltf.animations[ 0 ] ).play();
+                const bird = {
+                    bird: gltf.scene,
+                    mixer: this.mixer
+                };
+                birds.push(bird);
+                this.cloneRandomBirdInstance();
+            },
+            cloneRandomBirdInstance(){
+                for(let i=0; i<10; i++){
+                    const nbird = this.birdModel.scene.clone();
+                    nbird.position.z = (Math.random()*1000)-500;
+                    nbird.position.y = 210 + (Math.random()*50);
+                    nbird.position.x = -3000 - Math.random() * 1000;
+                    this.scene.add(nbird);
+                    const mixer = new THREE.AnimationMixer(nbird);
+                    mixer.clipAction(this.birdModel.animations[ 0 ] ).play();
+                    mixer.setTime(Math.random()*5);
+                    const bird = {
+                        bird: nbird,
+                        mixer: mixer
+                    };
+                    birds.push(bird);
+                }
+            },
+            onPointerMove( e ) {
+				if ( e.isPrimary === false ) return;
+				mouseX = e.clientX - windowHalfX;
+				mouseY = e.clientY - windowHalfY;
+			},
+            onWindowResize() {
+                this.backgroundDom.style.width = '100%';
+                const width = this.backgroundDom.clientWidth;
+                const height = this.backgroundDom.clientHeight;
+				this.renderer.setSize( width, height );
+				this.camera.aspect = width / height;
+				this.camera.updateProjectionMatrix();
+			},
+            render(){
+                let delta = clock.getDelta();
+                for(let i=0; i <  birds.length; i++){
+                    birds[i].mixer?.update( delta*2 );
+                    birds[i].bird.position.x += 100 * delta;
+                    if(birds[i].bird.position.x > 1200){
+                        birds[i].bird.position.x = -2000 - Math.random() * 500;
+                    }
+                }
+                this.camera.position.z = Math.max(-350,Math.min(this.camera.position.z + (( mouseX - this.camera.position.z ) * 0.005), 350));
+                this.camera.position.y = Math.max(280,Math.min(this.camera.position.y + (( mouseY - this.camera.position.y ) * 0.002), 370));
+                this.camera.lookAt(0,150,0);
+				if ( terrain.visible ) {
+                    this.uniformsNoise[ 'offset' ].value.x += delta * 0.2;
+                    this.quadTarget.material = this.heightMapNoiseShaderMat;
+                    this.renderer.setRenderTarget( this.heightMap );
+                    this.renderer.clear();
+                    this.renderer.render( this.sceneRenderTarget, this.cameraOrtho );
+					this.renderer.setRenderTarget( null );
+					this.renderer.render( this.scene, this.camera );
+				}
+            },
+            animate() {
+                window.addEventListener( 'pointermove', this.onPointerMove );
+				this.renderer.setAnimationLoop(this.render);
+			},
+            suspendBackgroundRender(){
+                window.removeEventListener( 'pointermove',this.onPointerMove);
+				this.renderer.setAnimationLoop(null);
+            },
             cbTextAppeared(entries, observer){
                 entries.forEach(entry => {
                     if (
@@ -596,11 +791,6 @@ const initHomeMainApp = function(){
                     </div>
                 </div>
                 <div id="homeAppBannerContainer">
-                    <div id="homeAppBannerVideoDiv">
-                        <video preload="auto" autoplay muted playsinline loop @loadeddata="updateVideoLoadProgress">
-                            <source src="./images/splashscreen.mp4" type="video/mp4" />
-                        </video>
-                    </div>
                     <div id="homeAppBannerLogo">
                         <span id="logoTextX">X</span>
                         <span id="logoTextCreative">CREATIVE</span>
