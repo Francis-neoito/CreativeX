@@ -718,6 +718,8 @@ const initHomeMainApp = function(){
                     };
                     birds.push(bird);
                 }
+                app._props.loadPercentage += 20;
+                document.dispatchEvent(updateProgressEvent);
             },
             onPointerMove( e ) {
 				if ( e.isPrimary === false ) return;
