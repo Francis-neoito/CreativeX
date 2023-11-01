@@ -518,6 +518,11 @@ const initHomeMainApp = function(){
                         <source src="./images/jewellery.mp4" type="video/mp4" />
                     </video>
                 </div></td>
+                <td><div class="showreelcard">
+                    <video class="showReelCardVideo" preload="auto" autoplay muted playsinline loop @loadeddata="updateVideoLoadProgress">
+                        <source src="./images/shopping.mp4" type="video/mp4" />
+                    </video>
+            </div></td>
                 </tr>
             </table>
         `
@@ -627,6 +632,14 @@ const initHomeMainApp = function(){
                     const endDrawLength = endPathLength * Math.max(0,endScrollPercentage);
                     endPath.style.strokeDashoffset = Math.max(0,endPathLength - endDrawLength);
                     
+                    const showreelcontainer = document.getElementById('showReelContainer');
+                    if(showreelcontainer.getBoundingClientRect().y - window.innerHeight < 0 && showreelcontainer.getBoundingClientRect().bottom>0){
+                        const reelScrollPer = (window.innerHeight - showreelcontainer.getBoundingClientRect().top)/((beyond.getBoundingClientRect().height + window.innerHeight));
+                        if(reelScrollPer >=0.0 && reelScrollPer <=1.0){
+                            const translateValue = showreelcontainer.getBoundingClientRect().width * reelScrollPer*0.85;
+                            showreelcontainer.style.transform = 'translateX(-'+ translateValue +'px)';
+                        }
+                    }
                 }else{
                     const beyondScrollPercentage = (document.documentElement.scrollTop - beyond.getBoundingClientRect().top - beyond.getBoundingClientRect().height)/(beyond.getBoundingClientRect().height);
                     const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage/2);
@@ -1084,6 +1097,9 @@ const initHomeMainApp = function(){
                             <p style="font-size:1.2rem;color: rgb(110 110 110);">Work with us on conception, design, development and 3D visualization
                             of your projects from scratch to get sophisticated and unique web experience for your customers.</p>
                         </div>
+                    </div>
+                    <div id="showReelCardContainer">
+                        <showreelcard></showreelcard>
                     </div>
                     <div id="svgPathContainers">
                         <svg id="beyondPathSvg" viewBox="0 150 430 470" preserveAscpectRatio="xMidYMax meet">
