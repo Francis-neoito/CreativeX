@@ -471,7 +471,7 @@ const initHomeMainApp = function(){
         props:[],
         data(){
             return{
-
+                uploadedNo: 0,
             }
         },
         created(){
@@ -482,7 +482,11 @@ const initHomeMainApp = function(){
         },
         methods:{
             updateVideoLoadProgress(){
-
+                this.uploadedNo++;
+                if(this.uploadedNo>=4){
+                    app._props.loadPercentage += 20;
+                    document.dispatchEvent(updateProgressEvent);
+                }
             }
         },
         template: `
@@ -549,11 +553,11 @@ const initHomeMainApp = function(){
             }
             document.addEventListener('updateprogress',(e)=>{
                 this.forceRenderLoader();
-                if(app._props.loadPercentage >=80 && this.bigCanvas){
+                if(app._props.loadPercentage >=90 && this.bigCanvas){
                     document.body.style.overflow = 'auto';
                     app._props.isLoaded = true;
                     document.dispatchEvent(new Event("canvasResetSize"));
-                }else if(app._props.loadPercentage >=80 && !this.orientationRequest){
+                }else if(app._props.loadPercentage >=90 && !this.orientationRequest){
                     app._props.loadPercentage = 100;
                     document.body.style.overflow = 'auto';
                     app._props.isLoaded = true;
