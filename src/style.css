@@ -237,6 +237,7 @@ body{
   position: absolute;
   top:100vh;
   width: 100%;
+  background-color: #fffff9;
 }
 #projectContainerFlex{
   margin-top: 8rem;
@@ -272,6 +273,34 @@ body{
   margin-top: 20vh;
   z-index: 10;
 }
+
+#showReelCardContainer{
+  height: 50vh;
+  width: 100%;
+  transform: rotateY('45deg');
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+#showReelContainer{
+ height: 100%;
+}
+.showreelcard{
+  display: inline-block;
+  background-color: white;
+  height: 88%;
+  width: 30vw;
+  border-radius: 1.2rem;
+  margin: 1rem 1.5rem;
+  box-shadow: 0 7px 30px -8px rgba(0, 0, 0, 0.97),0px 10px 20px rgba(12, 12, 12, 0.051);
+  overflow: hidden;
+}
+.showReelCardVideo{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
 .jewelleryContainer{
   display: flex;
   flex-direction: row;
@@ -287,7 +316,6 @@ body{
   height: 100%;
   width: 56%;
   border-radius: 1rem 0rem 0rem 1rem;
-  /* box-shadow: 0 3px 12px rgba(0, 0, 0, 0.221), 0 3px 12px rgba(0, 0, 0, 0.307); */
 }
 #jewelleryInfo{
   position: relative;
@@ -350,6 +378,7 @@ body{
   overflow: hidden;
   width: 100%;
   z-index: 0;
+  margin-top: 20vh;
 }
 .grid{
   position: relative;

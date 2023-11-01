@@ -467,6 +467,61 @@ const initHomeMainApp = function(){
             </div>
         `
     });
+    app.component('showreelcard',{
+        props:[],
+        data(){
+            return{
+
+            }
+        },
+        created(){
+
+        },
+        mounted(){
+
+        },
+        methods:{
+            updateVideoLoadProgress(){
+
+            }
+        },
+        template: `
+            <table id="showReelContainer">
+                <tr>
+                <td><div class="showreelcard">
+                    <video class="showReelCardVideo" preload="auto" autoplay muted playsinline loop @loadeddata="updateVideoLoadProgress">
+                        <source src="./images/realestate.mp4" type="video/mp4" />
+                    </video>
+                </div></td>
+                <td><div class="showreelcard">
+                    <video class="showReelCardVideo" preload="auto" autoplay muted playsinline loop @loadeddata="updateVideoLoadProgress">
+                        <source src="./images/jewellery.mp4" type="video/mp4" />
+                    </video>
+                </div></td>
+                <td><div class="showreelcard">
+                    <video class="showReelCardVideo" preload="auto" autoplay muted playsinline loop @loadeddata="updateVideoLoadProgress">
+                        <source src="./images/shopping.mp4" type="video/mp4" />
+                    </video>
+                </div></td>
+                <td><div class="showreelcard">
+                    <video class="showReelCardVideo" preload="auto" autoplay muted playsinline loop @loadeddata="updateVideoLoadProgress">
+                        <source src="./images/patternengine.mp4" type="video/mp4" />
+                    </video>
+                </div></td>
+                <td><div class="showreelcard">
+                    <video class="showReelCardVideo" preload="auto" autoplay muted playsinline loop @loadeddata="updateVideoLoadProgress">
+                        <source src="./images/realestate.mp4" type="video/mp4" />
+                    </video>
+                </div></td>
+                <td><div class="showreelcard">
+                    <video class="showReelCardVideo" preload="auto" autoplay muted playsinline loop @loadeddata="updateVideoLoadProgress">
+                        <source src="./images/jewellery.mp4" type="video/mp4" />
+                    </video>
+                </div></td>
+                </tr>
+            </table>
+        `
+    });
     app.component('homemain',{
         props:[],
         data(){
@@ -585,6 +640,29 @@ const initHomeMainApp = function(){
                     const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage);
                     reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
                 }
+            });
+            window.addEventListener("wheel",(e)=>{
+                    const showreelcontainer = document.getElementById('showReelCardContainer');
+                    if(showreelcontainer.getBoundingClientRect().y - window.innerHeight < 10 && showreelcontainer.getBoundingClientRect().bottom>0){
+                        let race = 10;
+                        let change = Math.abs(e.deltaY)
+                        if(change<10){
+                            race = 1;
+                        }else if(change<10){
+                            race = 10;
+                        }else if(change<25){
+                            race = 20;
+                        }else if(change<50){
+                            race = 30;
+                        }else{
+                            race = 60;
+                        }
+                        if (e.deltaY > 0){
+                            showreelcontainer.scrollLeft += race;
+                        }else{
+                            showreelcontainer.scrollLeft -= race;
+                        }
+                    }
             });
         },
         methods:{
@@ -889,6 +967,9 @@ const initHomeMainApp = function(){
                             <p style="font-size:1.75rem;color: rgb(110 110 110);">Work with us on conception, design, development and 3D visualization
                             of your projects from scratch to get sophisticated and unique web experience for your customers.</p>
                         </div>
+                    </div>
+                    <div id="showReelCardContainer">
+                        <showreelcard></showreelcard>
                     </div>
                     <div id="svgPathContainers">
                         <svg id="beyondPathSvg" viewBox="0 0 1908 888" preserveAscpectRatio="xMidYMax meet">
