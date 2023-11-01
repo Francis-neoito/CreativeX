@@ -652,30 +652,16 @@ const initHomeMainApp = function(){
                     const reachScrollPercentage = (document.documentElement.scrollTop - reach.getBoundingClientRect().top - reach.getBoundingClientRect().height*3)/(reach.getBoundingClientRect().height);
                     const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage/3);
                     reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
-                }
-            });
-            window.addEventListener("wheel",(e)=>{
-                    const showreelcontainer = document.getElementById('showReelCardContainer');
-                    if(showreelcontainer.getBoundingClientRect().y - window.innerHeight < 10 && showreelcontainer.getBoundingClientRect().bottom>0){
-                        let race = 10;
-                        let change = Math.abs(e.deltaY)
-                        if(change<10){
-                            race = 1;
-                        }else if(change<10){
-                            race = 10;
-                        }else if(change<25){
-                            race = 20;
-                        }else if(change<50){
-                            race = 30;
-                        }else{
-                            race = 60;
-                        }
-                        if (e.deltaY > 0){
-                            showreelcontainer.scrollLeft += race;
-                        }else{
-                            showreelcontainer.scrollLeft -= race;
+
+                    const showreelcontainer = document.getElementById('showReelContainer');
+                    if(showreelcontainer.getBoundingClientRect().y - window.innerHeight < 40 && showreelcontainer.getBoundingClientRect().bottom>0){
+                        const reelScrollPer = (window.innerHeight - showreelcontainer.getBoundingClientRect().top)/((beyond.getBoundingClientRect().height + window.innerHeight));
+                        if(reelScrollPer >=0.0 && reelScrollPer <=1.0){
+                            const translateValue = showreelcontainer.getBoundingClientRect().width * reelScrollPer * 0.7;
+                            showreelcontainer.style.transform = 'translateX(-'+ translateValue +'px)';
                         }
                     }
+                }
             });
         },
         methods:{
