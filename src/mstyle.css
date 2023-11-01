@@ -13,7 +13,7 @@ body{
   left: 0;
   width: 100%;
   height: 100%;
-  filter: blur(2px);
+  filter: blur(1px);
 }
 #landscapeStopperDiv{
   position: fixed;
@@ -64,6 +64,37 @@ body{
   color: aliceblue;
   font-size: 1.25rem;
 }
+#orientationPromptDiv{
+  position: absolute;
+  bottom: 10vh;
+  width: 80%;
+  margin: auto;
+  font-size: 1rem;
+  font-family: sans-serif;
+  text-align: center;
+}
+#orientationOptionDiv{
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+.orientOption{
+  display: inline-block;
+  height: 2.5rem;
+  width: 30%;
+  font-size: 1rem;
+  margin: 0rem 0.5rem;
+  text-decoration: none;
+  border: none;
+  border-radius: 0.25rem;
+  color: aliceblue;
+  letter-spacing: 0.05rem;
+  background-color: #52a645;
+  transition: 0.3;
+}
+.orientOption:hover{
+  opacity: 0.8;
+}
 #homeLoader{
   top: 50%;
   height: 0.5rem;
@@ -83,6 +114,38 @@ body{
   display: flex;
   flex-direction: column;
   background-image: linear-gradient(rgba(4, 10, 0, 0.826) 5%,rgba(0, 23, 1, 0.615) 50%, rgba(0, 15, 1, 0)100%);
+}
+#scrollToolTip{
+  position: fixed;
+  color: aliceblue;
+  width: 100%;
+  text-align: center;
+  bottom: 5vh;
+  font-size: 1.1rem;
+  font-family: sans-serif;
+  opacity: 0.8;
+  display: none;
+}
+.scrollToolTipUpAnim {
+  animation: 6s anim-toolUp ease-out forwards;
+}
+@keyframes anim-toolUp {
+  0% {
+    opacity: 0;
+    transform: translateY(80%);
+  }
+  20% {
+    opacity: 0.8;
+    transform: translateY(0%);
+  }
+  80% {
+    opacity: 0.8;
+    transform: translateY(0%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(80%);
+  }
 }
 #titleX{
   height: 1.5rem;
@@ -179,8 +242,7 @@ body{
   font-size: 20rem;
   font-family: sans-serif;
   font-weight: 600;
-  text-shadow: 8px 8px 14px #00000046;
-  filter: blur(1px);
+  text-shadow: 5px 5px 25px #00000046;
 }
 #logoTextCreative{
   position: absolute;

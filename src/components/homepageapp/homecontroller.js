@@ -8,7 +8,7 @@ import { TerrainFragmentShader, TerrainVertexShader } from './Shaders';
 const updateProgressEvent = new Event('updateprogress');
 const clock = new THREE.Clock();
 let terrain;
-let mouseX = 0, mouseY = 0;
+let mouseX = 0, mouseY = 0, rotaionX = 0, rotaionY=0;
 let windowHalfX = window.innerWidth / 2;
 let windowHalfY = window.innerHeight / 2;
 const birds = [];
@@ -474,18 +474,31 @@ const initHomeMainApp = function(){
                 rootApp: app,
                 dummyKey: false,
                 bigCanvas: true,
+                orientationPermissionGranted: false,
+                orientationRequest : false,
             };
         },
         created(){
             if(screen.width<=500){
                 this.bigCanvas = false;
             }
+            if (typeof(DeviceOrientationEvent) !== 'undefined' && typeof(DeviceOrientationEvent.requestPermission) === 'function'){
+                DeviceOrientationEvent.requestPermission().catch(()=>{
+                    this.orientationRequest = true;
+                });
+            }
             document.addEventListener('updateprogress',(e)=>{
                 this.forceRenderLoader();
-                if(app._props.loadPercentage >=80){
+                if(app._props.loadPercentage >=80 && this.bigCanvas){
                     document.body.style.overflow = 'auto';
                     app._props.isLoaded = true;
                     document.dispatchEvent(new Event("canvasResetSize"));
+                }else if(app._props.loadPercentage >=80 && !this.orientationRequest){
+                    app._props.loadPercentage = 100;
+                    document.body.style.overflow = 'auto';
+                    app._props.isLoaded = true;
+                    document.dispatchEvent(new Event("canvasResetSize"));
+                    setTimeout(this.showScrollTip,10000);
                 }
             });
             document.addEventListener('canvasResetSize',()=>{
@@ -575,6 +588,13 @@ const initHomeMainApp = function(){
             });
         },
         methods:{
+            showScrollTip(){
+                if(document.documentElement.scrollTop <= 20){
+                    const scrollTip = document.getElementById('scrollToolTip');
+                    scrollTip.style.display = 'block';
+                    scrollTip.classList.add('scrollToolTipUpAnim');
+                }
+            },
             initBackground(){
                 this.mlib = {};
                 this.animDelta = 0;
@@ -655,7 +675,6 @@ const initHomeMainApp = function(){
 				this.onWindowResize();
 
 				window.addEventListener( 'resize', this.onWindowResize, false );
-
                 let fLow = 0.1, fHigh = 0.8;
                 this.lightVal = THREE.MathUtils.clamp( this.lightVal + 0.5 * clock.getDelta(), fLow, fHigh );
 
@@ -726,6 +745,11 @@ const initHomeMainApp = function(){
 				mouseX = e.clientX - windowHalfX;
 				mouseY = e.clientY - windowHalfY;
 			},
+            onDeviceRotation(e){
+                const con = document.getElementById('console');
+				rotaionX = rotaionX + e.rotationRate.beta;
+				rotaionY = rotaionY + e.rotationRate.alpha;
+            },
             onWindowResize() {
                 this.backgroundDom.style.width = '100%';
                 const width = this.backgroundDom.clientWidth;
@@ -743,9 +767,14 @@ const initHomeMainApp = function(){
                         birds[i].bird.position.x = -2000 - Math.random() * 500;
                     }
                 }
-                this.camera.position.z = Math.max(-350,Math.min(this.camera.position.z + (( mouseX - this.camera.position.z ) * 0.005), 350));
-                this.camera.position.y = Math.max(280,Math.min(this.camera.position.y + (( mouseY - this.camera.position.y ) * 0.002), 370));
-                this.camera.lookAt(0,150,0);
+                if(this.bigCanvas){
+                    this.camera.position.z = Math.max(-350,Math.min(this.camera.position.z + (( mouseX - this.camera.position.z ) * 0.005), 350));
+                    this.camera.position.y = Math.max(280,Math.min(this.camera.position.y + (( mouseY - this.camera.position.y ) * 0.002), 370));
+                    this.camera.lookAt(0,150,0);
+                }else{
+                    this.camera.position.z = Math.max(-350,Math.min(this.camera.position.z + (( rotaionX + this.camera.position.z ) * 0.002), 350));
+                    this.camera.lookAt(0,150,0);
+                }
 				if ( terrain.visible ) {
                     this.uniformsNoise[ 'offset' ].value.x += delta * 0.2;
                     this.quadTarget.material = this.heightMapNoiseShaderMat;
@@ -757,11 +786,17 @@ const initHomeMainApp = function(){
 				}
             },
             animate() {
-                window.addEventListener( 'pointermove', this.onPointerMove );
+                if(!this.bigCanvas)
+                    window.addEventListener( 'devicemotion', this.onDeviceRotation, false );
+                else
+                    window.addEventListener( 'pointermove', this.onPointerMove );
 				this.renderer.setAnimationLoop(this.render);
 			},
             suspendBackgroundRender(){
-                window.removeEventListener( 'pointermove',this.onPointerMove);
+                if(!this.bigCanvas)
+                    window.removeEventListener( 'DeviceMotionEvent', this.onDeviceRotation );
+                else
+                    window.removeEventListener( 'pointermove',this.onPointerMove);
 				this.renderer.setAnimationLoop(null);
             },
             cbTextAppeared(entries, observer){
@@ -782,12 +817,34 @@ const initHomeMainApp = function(){
             forceRenderLoader(){
                 this.dummyKey = !this.dummyKey;
             },
+            skipOrientation(){
+                this.orientationRequest = false;
+                document.dispatchEvent(updateProgressEvent);
+            },
+            requestOrientation(){
+                if (typeof(DeviceOrientationEvent) !== 'undefined' && typeof(DeviceOrientationEvent.requestPermission) === 'function'){
+                    DeviceOrientationEvent.requestPermission().then(response => {
+                        if(response == 'granted'){
+                            this.orientationPermissionGranted = true;
+                        }
+                    }).catch();
+                }
+                this.orientationRequest = false;
+                document.dispatchEvent(updateProgressEvent);
+            }
         },
         template:`
             <div id="homeLoaderBackground" v-if="!rootApp._props.isLoaded">
                 <div style="width:80%; display:flex;justify-content:center;align-items: center;flex-direction:column">
                     <div :key="dummyKey" id="homeLoader" :style="{'width':rootApp._props.loadPercentage+'%'}"></div>
                     <span :key="dummyKey" style="margin-top:1rem">{{rootApp._props.loadPercentage+'%'}}</span>
+                </div>
+                <div v-if="!bigCanvas && orientationRequest" id="orientationPromptDiv">
+                    <span>For better experience allow device motion</span>
+                    <div id="orientationOptionDiv">
+                        <button class="orientOption" style="background-color:#555555;" @click="skipOrientation()">Skip</button>
+                        <button class="orientOption" @click="requestOrientation()">Allow</button>
+                    </div>
                 </div>
             </div>
             <div v-if="bigCanvas">
@@ -905,6 +962,8 @@ const initHomeMainApp = function(){
             
             <div v-else>
                 <div class="homeAppHeader">
+                    <div id="scrollToolTip">+ Scroll for more +</div>
+                    <div id="console" style="position:absolute; color:red;"></div>
                     <div id="homeAppHeaderTitleContainer">
                         <div class="homeAppHeaderTitle">Creative<img id="titleX" src="./images/favcon.svg"></div>
                         <div id="homeAppContactUs">CONTACT US</div>
@@ -934,7 +993,6 @@ const initHomeMainApp = function(){
                     </div>
                 </div>
                 <div id="projectsContainer">
-                    <p id="scrollLabel">- Scroll for more -</p>
                     <div id="projectContainerFlex">
                         <div id="projectsHeader">
                             <h1 id="projectsTitle">Projects</h1>
