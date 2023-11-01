@@ -611,19 +611,19 @@ const initHomeMainApp = function(){
             observer.observe(document.getElementById('typog4'));
             window.addEventListener("scroll",(e)=>{
                 if(!this.bigCanvas){
-                    const beyondScrollPercentage = (document.documentElement.scrollTop -beyond.getBoundingClientRect().y - screen.height)/beyond.getBoundingClientRect().height;
+                    const beyondScrollPercentage = (document.documentElement.scrollTop -beyond.getBoundingClientRect().y - window.innerHeight)/beyond.getBoundingClientRect().height;
                     const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage/2);
                     beyondPath.style.strokeDashoffset = Math.max(0,beyondPathLength - beyondDrawLength);
 
-                    const visionScrollPercentage = (1-(vision.getBoundingClientRect().y - screen.height*0.8))/vision.getBoundingClientRect().height;
+                    const visionScrollPercentage = (1-(vision.getBoundingClientRect().y - window.innerHeight*0.8))/vision.getBoundingClientRect().height;
                     const visionDrawLength = visionPathLength * Math.max(0,visionScrollPercentage);
                     visionPath.style.strokeDashoffset = Math.max(0,visionPathLength - visionDrawLength);
 
-                    const reachScrollPercentage = (1-(reach.getBoundingClientRect().y - screen.height*0.8))/reach.getBoundingClientRect().height;
+                    const reachScrollPercentage = (1-(reach.getBoundingClientRect().y - window.innerHeight*0.8))/reach.getBoundingClientRect().height;
                     const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage);
                     reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
 
-                    const endScrollPercentage = (1-(end.getBoundingClientRect().y - screen.height*0.8))/end.getBoundingClientRect().height;
+                    const endScrollPercentage = (1-(end.getBoundingClientRect().y - window.innerHeight*0.8))/end.getBoundingClientRect().height;
                     const endDrawLength = endPathLength * Math.max(0,endScrollPercentage);
                     endPath.style.strokeDashoffset = Math.max(0,endPathLength - endDrawLength);
                     
@@ -637,7 +637,7 @@ const initHomeMainApp = function(){
                     visionPath.style.strokeDashoffset = Math.max(0,visionPathLength - visionDrawLength);
 
                     const reachScrollPercentage = (document.documentElement.scrollTop - reach.getBoundingClientRect().top - reach.getBoundingClientRect().height*3)/(reach.getBoundingClientRect().height);
-                    const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage);
+                    const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage/3);
                     reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
                 }
             });
@@ -1020,13 +1020,13 @@ const initHomeMainApp = function(){
                         <jewelleryframe :identifier="'jewelleryViewer1'"></jewelleryframe>
                         <div class="typog" id="typog1">Beyond</div>
                         <div class="typog" id="typog2">Visions</div>
-                        <productframe :identifier="'jewelleryViewer2'" :margintop="'70vh'"></productframe>
+                        <productframe :identifier="'jewelleryViewer2'" :margintop="'100vh'"></productframe>
                     </div>
-                    <div class="grid" style="margin-top:-10rem">
+                    <div class="grid" style="margin-top:15vh">
                         <realestateframe :identifier="'jewelleryViewer3'"></realestateframe>
                         <div class="typog" id="typog3">Within</div>
                         <div class="typog" id="typog4">Reach.</div>
-                        <patternengineframe :identifier="'jewelleryViewer4'" :margintop="'70vh'"></patternengineframe>
+                        <patternengineframe :identifier="'jewelleryViewer4'" :margintop="'100vh'"></patternengineframe>
                     </div>
                     <div id="footerContainer">
                         <div id="footerTitle">

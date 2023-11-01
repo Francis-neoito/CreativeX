@@ -365,13 +365,13 @@ body{
   width: 100%;
   overflow: hidden;
   z-index: 0;
-  margin-top: 12%;
+  margin-top: 45vh;
 }
 #reachPathSvg{
   width: 100%;
   overflow: hidden;
   z-index: 0;
-  margin-top: -10vh;
+  margin-top: 35vh;
 }
 #svgPathContainers{
   position: absolute;
