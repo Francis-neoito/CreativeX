@@ -336,12 +336,11 @@ body{
 #showReelCardContainer{
   height: 40vh;
   width: 100%;
-  transform: rotateY('45deg');
   overflow: hidden;
-  -webkit-overflow-scrolling: touch;
 }
 #showReelContainer{
  height: 100%;
+ transition: 25ms cubic-bezier(.25,.8,.25,1);
 }
 .showreelcard{
   display: inline-block;
