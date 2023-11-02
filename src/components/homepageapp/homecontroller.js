@@ -14,6 +14,13 @@ let windowHalfX = window.innerWidth / 2;
 let windowHalfY = window.innerHeight / 2;
 const birds = [];
 let frameRatedelta = 0;
+const backendScenes = [];
+const models = [];
+const target = new THREE.Vector2();
+let backendRenderer;
+let backendCanvas = null;
+let bCanvaWidth = window.innerWidth;
+let bCanvaHeight = window.innerHeight;
 //advance offset for monitoring renderer's visibility
 let rootMarginValue = Math.floor(screen.height*0.20);
 const initHomeMainApp = function(){
@@ -580,7 +587,7 @@ const initHomeMainApp = function(){
         mounted(){
             this.backgroundDom = document.getElementById('mainBackgroundCanvas');
             this.initBackground();
-
+            if(this.bigCanvas)this.initBackendRenderEngine();
             this.dom = document.getElementById('homeAppBannerCanvaDiv');
             const beyondPath = document.getElementById('beyondPath');
             const beyond = document.getElementById('beyondPathSvg');
@@ -620,6 +627,11 @@ const initHomeMainApp = function(){
             observer.observe(document.getElementById('typog3'));
             observer.observe(document.getElementById('typog4'));
             window.addEventListener("scroll",(e)=>{
+                if(this.backgroundDom.getBoundingClientRect().bottom < 30){
+                    this.suspendBackgroundRender();
+                }else{
+                    this.animate();
+                }
                 if(!this.bigCanvas){
                     const beyondScrollPercentage = (document.documentElement.scrollTop -beyond.getBoundingClientRect().y - window.innerHeight)/beyond.getBoundingClientRect().height;
                     const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage/2);
@@ -646,16 +658,16 @@ const initHomeMainApp = function(){
                         }
                     }
                 }else{
-                    const beyondScrollPercentage = (document.documentElement.scrollTop - beyond.getBoundingClientRect().top - beyond.getBoundingClientRect().height)/(beyond.getBoundingClientRect().height);
-                    const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage/2);
+                    const beyondScrollPercentage = (window.innerHeight-beyond.getBoundingClientRect().top - 200)/beyond.getBoundingClientRect().height
+                    const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage*0.7);
                     beyondPath.style.strokeDashoffset = Math.max(0,beyondPathLength - beyondDrawLength);
     
-                    const visionScrollPercentage = (document.documentElement.scrollTop - vision.getBoundingClientRect().top - vision.getBoundingClientRect().height)/(vision.getBoundingClientRect().height);
-                    const visionDrawLength = visionPathLength * Math.max(0,visionScrollPercentage/3);
+                    const visionScrollPercentage = (window.innerHeight-vision.getBoundingClientRect().top - 200)/vision.getBoundingClientRect().height
+                    const visionDrawLength = visionPathLength * Math.max(0,visionScrollPercentage*0.7);
                     visionPath.style.strokeDashoffset = Math.max(0,visionPathLength - visionDrawLength);
 
-                    const reachScrollPercentage = (document.documentElement.scrollTop - reach.getBoundingClientRect().top - reach.getBoundingClientRect().height*3)/(reach.getBoundingClientRect().height);
-                    const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage/3);
+                    const reachScrollPercentage = (window.innerHeight-reach.getBoundingClientRect().top - 200)/reach.getBoundingClientRect().height
+                    const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage*0.8);
                     reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
 
                     const showreelcontainer = document.getElementById('showReelContainer');
@@ -846,8 +858,10 @@ const initHomeMainApp = function(){
             },
             onPointerMove( e ) {
 				if ( e.isPrimary === false ) return;
-				mouseX = e.clientX - windowHalfX;
-				mouseY = e.clientY - windowHalfY;
+				mouseX = e.clientX;
+				mouseY = e.clientY;
+                target.x = mouseX;
+                target.y = mouseY;
 			},
             onDeviceRotation(e){
                 const con = document.getElementById('console');
@@ -872,8 +886,8 @@ const initHomeMainApp = function(){
                     }
                 }
                 if(this.bigCanvas){
-                    this.camera.position.z = Math.max(-350,Math.min(this.camera.position.z + (( mouseX - this.camera.position.z ) * 0.005), 350));
-                    this.camera.position.y = Math.max(280,Math.min(this.camera.position.y + (( mouseY - this.camera.position.y ) * 0.002), 370));
+                    this.camera.position.z = Math.max(-350,Math.min(this.camera.position.z + (( mouseX - windowHalfX - this.camera.position.z ) * 0.005), 350));
+                    this.camera.position.y = Math.max(280,Math.min(this.camera.position.y + (( mouseY - windowHalfY - this.camera.position.y ) * 0.002), 370));
                     this.camera.lookAt(0,150,0);
                 }else{
                     this.camera.position.z = Math.max(-350,Math.min(this.camera.position.z + (( rotaionX + this.camera.position.z ) * 0.002), 350));
@@ -935,7 +949,63 @@ const initHomeMainApp = function(){
                 }
                 this.orientationRequest = false;
                 document.dispatchEvent(updateProgressEvent);
-            }
+            },
+            initBackendRenderEngine(){
+                backendCanvas = document.getElementById('backendCanvas');
+                for(let i=0; i<2;i++){
+                    const perspectiveCardScene = new THREE.Scene();
+                    const perspectiveCardCamera = new THREE.PerspectiveCamera( 70, bCanvaWidth/bCanvaHeight, 1, 100 );
+                    perspectiveCardCamera.position.z = 10;
+                    perspectiveCardScene.userData.element = document.getElementById('perspectiveCardDiv'+ (i+1));
+                    perspectiveCardScene.userData.camera = perspectiveCardCamera;
+                    perspectiveCardScene.add( new THREE.HemisphereLight( 0xaaaaaa, 0x444444, 3 ) );
+                    const light = new THREE.DirectionalLight( 0xffffff, 1.5 );
+                    light.position.set( 1, 1, 1 );
+                    perspectiveCardScene.add( light );
+                    backendScenes.push(perspectiveCardScene);
+                    const Gloader = new GLTFLoader();
+                    Gloader.load( './objects/panda.glb', (gltf)=>{
+                        gltf.scene.position.y = -10;
+                        gltf.scene.scale.set(3,3,3);
+                        backendScenes[i].add(gltf.scene);
+                    });
+                }
+                backendRenderer = new THREE.WebGLRenderer( { canvas: backendCanvas, antialias: true } );
+				backendRenderer.setClearColor( 0xffffff, 0 );
+				backendRenderer.setPixelRatio( window.devicePixelRatio );
+                backendRenderer.setSize( backendCanvas.getBoundingClientRect().width, backendCanvas.getBoundingClientRect().height, false );
+                this.startBackendCanvasRendering();
+            },
+            startBackendCanvasRendering(){
+                document.addEventListener( 'pointermove', this.onPointerMove );
+				backendRenderer.setAnimationLoop(this.backendCanvasRender);
+            },
+            backendCanvasRender(){
+                backendCanvas.style.transform = `translateY(${window.scrollY}px)`;
+                backendRenderer.setClearColor( 0xffffff , 0);
+				backendRenderer.setScissorTest( false );
+				backendRenderer.clear();
+				backendRenderer.setClearColor( 0xefef00 , 0);
+				backendRenderer.setScissorTest( true );
+                backendScenes.forEach( function ( scene ) {
+                    const rect = scene.userData.element.getBoundingClientRect();
+                    if ( rect.bottom < 0 || rect.top > backendCanvas.clientHeight ||
+                        rect.right < 0 || rect.left > backendCanvas.clientWidth ) {
+                       return; // it's off screen
+                   }
+                   const width = rect.right - rect.left;
+                   const height = rect.bottom - rect.top;
+                   const bottom = backendCanvas.clientHeight - rect.bottom;
+                   const midY = (rect.top + (height/2));
+                   const midX = (rect.left + (width/2));
+                   scene.children[2]?.lookAt((target.x - midX)/25,-(target.y - midY)/25,100);
+				   scene.userData.camera.aspect = width / height; // not changing in this example
+				   scene.userData.camera.updateProjectionMatrix();
+                   backendRenderer.setViewport( rect.left, bottom, width, height );
+                   backendRenderer.setScissor( rect.left, bottom, width, height );
+                   backendRenderer.render( scene, scene.userData.camera );
+                });
+            },
         },
         template:`
             <div id="homeLoaderBackground" v-if="!rootApp._props.isLoaded">
@@ -997,6 +1067,29 @@ const initHomeMainApp = function(){
                     <div id="showReelCardContainer">
                         <showreelcard></showreelcard>
                     </div>
+                    <p class="projectSubTitle">We build epic realtime interactive experience to blow people's mind.</p>
+                    <div id="perspectiveCardContainer">
+                        <div class="perspectiveContainerGrid">
+                            <div class="demoArea">
+                                <div id="perspectiveCardDiv1" class="perspectiveCardDiv">
+                                </div>
+                            </div>
+                            <div class="demoSection">
+                                <p class="demoSectionPara">
+                                    Add an extra dimension to your existing websites hustle free and upscale your customer experience with mind blowing interactive 3D experience.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="perspectiveContainerGrid">
+                            <div class="demoSection">
+                                <h1 class="demoSectionTitle">Embedding</h1>
+                            </div>
+                            <div class="demoArea">
+                                <div id="perspectiveCardDiv2" class="perspectiveCardDiv" style="float:right">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div id="svgPathContainers">
                         <svg id="beyondPathSvg" viewBox="0 0 1908 888" preserveAscpectRatio="xMidYMax meet">
                             <defs>
@@ -1041,8 +1134,7 @@ const initHomeMainApp = function(){
                             -37.50,691.50 -48.00,703.50 -112.50,717.00" />
                         </svg>
                     </div>
-                    <p class="projectSubTitle">We build epic realtime interactive experience to blow people's mind.</p>
-                    <div class="grid">
+                    <div class="grid" style="margin-top:30vh">
                         <jewelleryframe :identifier="'jewelleryViewer1'"></jewelleryframe>
                         <div class="typog" id="typog1">Beyond</div>
                         <div class="typog" id="typog2">Visions</div>
