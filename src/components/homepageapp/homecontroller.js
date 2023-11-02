@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as WEBGI from 'webgi';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { TerrainFragmentShader, TerrainVertexShader } from './Shaders';
+import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
 
 const updateProgressEvent = new Event('updateprogress');
 const clock = new THREE.Clock();
@@ -768,7 +769,29 @@ const initHomeMainApp = function(){
 
                 const Gloader = new GLTFLoader();
                 Gloader.load( './objects/Flamingo.glb', this.gltFLoaded);
+
+                const textureLoader = new THREE.TextureLoader();
+
+				const textureFlare0 = textureLoader.load( './images/lensflare.png' );
+				const textureFlare3 = textureLoader.load( './images/lensflare3.png' );
+
+				if(this.bigCanvas)
+                    this.addLensFlare(6000, -50, -1000, textureFlare0, textureFlare3 );
+                else
+                    this.addLensFlare(6000, -100, -500, textureFlare0, textureFlare3 );
                 this.animate();
+            },
+            addLensFlare(x, y, z , textureFlare0, textureFlare3){
+                const light = new THREE.PointLight( 0xffff55, 2.5, 2000, 0 );
+                light.position.set( x, y, z );
+                this.scene.add( light );
+                const lensflare = new Lensflare();
+                lensflare.addElement( new LensflareElement( textureFlare0, 500, 0.2, light.color ) );
+                lensflare.addElement( new LensflareElement( textureFlare3, 60, 0.6 ) );
+                lensflare.addElement( new LensflareElement( textureFlare3, 70, 0.7 ) );
+                lensflare.addElement( new LensflareElement( textureFlare3, 120, 0.9 ) );
+                lensflare.addElement( new LensflareElement( textureFlare3, 70, 1 ) );
+                light.add( lensflare );
             },
             gltFLoaded(gltf){
                 if(this.bigCanvas){
