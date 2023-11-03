@@ -954,8 +954,8 @@ const initHomeMainApp = function(){
                 backendCanvas = document.getElementById('backendCanvas');
                 for(let i=0; i<2;i++){
                     const perspectiveCardScene = new THREE.Scene();
-                    const perspectiveCardCamera = new THREE.PerspectiveCamera( 70, bCanvaWidth/bCanvaHeight, 1, 100 );
-                    perspectiveCardCamera.position.z = 10;
+                    const perspectiveCardCamera = new THREE.PerspectiveCamera( 20, bCanvaWidth/bCanvaHeight, 1, 200 );
+                    perspectiveCardCamera.position.z = 50;
                     perspectiveCardScene.userData.element = document.getElementById('perspectiveCardDiv'+ (i+1));
                     perspectiveCardScene.userData.camera = perspectiveCardCamera;
                     perspectiveCardScene.add( new THREE.HemisphereLight( 0xaaaaaa, 0x444444, 3 ) );
@@ -965,8 +965,8 @@ const initHomeMainApp = function(){
                     backendScenes.push(perspectiveCardScene);
                     const Gloader = new GLTFLoader();
                     Gloader.load( './objects/panda.glb', (gltf)=>{
-                        gltf.scene.position.y = -10;
-                        gltf.scene.scale.set(3,3,3);
+                        gltf.scene.position.y = -11;
+                        gltf.scene.scale.set(3.8,3.8,3.8);
                         backendScenes[i].add(gltf.scene);
                     });
                 }
@@ -987,24 +987,24 @@ const initHomeMainApp = function(){
 				backendRenderer.clear();
 				backendRenderer.setClearColor( 0xefef00 , 0);
 				backendRenderer.setScissorTest( true );
-                backendScenes.forEach( function ( scene ) {
-                    const rect = scene.userData.element.getBoundingClientRect();
+                for(let i=0; i<2;i++){
+                    const rect = backendScenes[i].userData.element.getBoundingClientRect();
                     if ( rect.bottom < 0 || rect.top > backendCanvas.clientHeight ||
                         rect.right < 0 || rect.left > backendCanvas.clientWidth ) {
-                       return; // it's off screen
+                       continue; // it's off screen
                    }
                    const width = rect.right - rect.left;
                    const height = rect.bottom - rect.top;
                    const bottom = backendCanvas.clientHeight - rect.bottom;
                    const midY = (rect.top + (height/2));
                    const midX = (rect.left + (width/2));
-                   scene.children[2]?.lookAt((target.x - midX)/25,-(target.y - midY)/25,100);
-				   scene.userData.camera.aspect = width / height; // not changing in this example
-				   scene.userData.camera.updateProjectionMatrix();
+                   backendScenes[i].children[2]?.lookAt((target.x - midX)/25,-(target.y - midY)/25,60);
+				   backendScenes[i].userData.camera.aspect = width / height;
+				   backendScenes[i].userData.camera.updateProjectionMatrix();
                    backendRenderer.setViewport( rect.left, bottom, width, height );
                    backendRenderer.setScissor( rect.left, bottom, width, height );
-                   backendRenderer.render( scene, scene.userData.camera );
-                });
+                   backendRenderer.render( backendScenes[i], backendScenes[i].userData.camera );
+                }
             },
         },
         template:`
