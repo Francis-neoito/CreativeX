@@ -171,9 +171,9 @@ body{
 }
 #homeAppBannerLogo{
   position: absolute;
-  top: 25vh;
+  top: 30vh;
   left: 25vw;
-  height: 60vh;
+  height: 50vh;
   width: 50vw;
   display: flex;
   align-items: center;
@@ -202,9 +202,9 @@ body{
 #logoOrg{
   position: absolute;
   color: rgb(226, 226, 226);
-  top: 29rem;
   font-family: Arial;
   font-size: 0.9rem;
+  bottom: 3vh;
 }
 #bannerOptions{
   position: absolute;
