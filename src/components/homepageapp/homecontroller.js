@@ -10,6 +10,7 @@ const updateProgressEvent = new Event('updateprogress');
 const clock = new THREE.Clock();
 let terrain;
 let mouseX = 0, mouseY = 0, rotaionX = 0, rotaionY=0;
+let rotTarget = new THREE.Vector2(0,0);
 let windowHalfX = window.innerWidth / 2;
 let windowHalfY = window.innerHeight / 2;
 const birds = [];
@@ -587,7 +588,7 @@ const initHomeMainApp = function(){
         mounted(){
             this.backgroundDom = document.getElementById('mainBackgroundCanvas');
             this.initBackground();
-            if(this.bigCanvas)this.initBackendRenderEngine();
+            this.initBackendRenderEngine();
             this.dom = document.getElementById('homeAppBannerCanvaDiv');
             const beyondPath = document.getElementById('beyondPath');
             const beyond = document.getElementById('beyondPathSvg');
@@ -632,19 +633,25 @@ const initHomeMainApp = function(){
                 }else{
                     this.animate();
                 }
+                if(backendCanvas.getBoundingClientRect().y - window.innerHeight < 0 && backendCanvas.getBoundingClientRect().bottom > 0){
+                    this.startBackendCanvasRendering();
+                }else{
+                    this.suspendBackendCanvasRendering();
+                }
+
+                const beyondScrollPercentage = (window.innerHeight-beyond.getBoundingClientRect().top - 200)/beyond.getBoundingClientRect().height
+                const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage*0.7);
+                beyondPath.style.strokeDashoffset = Math.max(0,beyondPathLength - beyondDrawLength);
+
+                const visionScrollPercentage = (window.innerHeight-vision.getBoundingClientRect().top - 200)/vision.getBoundingClientRect().height
+                const visionDrawLength = visionPathLength * Math.max(0,visionScrollPercentage*0.7);
+                visionPath.style.strokeDashoffset = Math.max(0,visionPathLength - visionDrawLength);
+
+                const reachScrollPercentage = (window.innerHeight-reach.getBoundingClientRect().top - 200)/reach.getBoundingClientRect().height
+                const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage*0.8);
+                reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
+
                 if(!this.bigCanvas){
-                    const beyondScrollPercentage = (document.documentElement.scrollTop -beyond.getBoundingClientRect().y - window.innerHeight)/beyond.getBoundingClientRect().height;
-                    const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage/2);
-                    beyondPath.style.strokeDashoffset = Math.max(0,beyondPathLength - beyondDrawLength);
-
-                    const visionScrollPercentage = (1-(vision.getBoundingClientRect().y - window.innerHeight*0.8))/vision.getBoundingClientRect().height;
-                    const visionDrawLength = visionPathLength * Math.max(0,visionScrollPercentage);
-                    visionPath.style.strokeDashoffset = Math.max(0,visionPathLength - visionDrawLength);
-
-                    const reachScrollPercentage = (1-(reach.getBoundingClientRect().y - window.innerHeight*0.8))/reach.getBoundingClientRect().height;
-                    const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage);
-                    reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
-
                     const endScrollPercentage = (1-(end.getBoundingClientRect().y - window.innerHeight*0.8))/end.getBoundingClientRect().height;
                     const endDrawLength = endPathLength * Math.max(0,endScrollPercentage);
                     endPath.style.strokeDashoffset = Math.max(0,endPathLength - endDrawLength);
@@ -658,18 +665,6 @@ const initHomeMainApp = function(){
                         }
                     }
                 }else{
-                    const beyondScrollPercentage = (window.innerHeight-beyond.getBoundingClientRect().top - 200)/beyond.getBoundingClientRect().height
-                    const beyondDrawLength = beyondPathLength * Math.max(0,beyondScrollPercentage*0.7);
-                    beyondPath.style.strokeDashoffset = Math.max(0,beyondPathLength - beyondDrawLength);
-    
-                    const visionScrollPercentage = (window.innerHeight-vision.getBoundingClientRect().top - 200)/vision.getBoundingClientRect().height
-                    const visionDrawLength = visionPathLength * Math.max(0,visionScrollPercentage*0.7);
-                    visionPath.style.strokeDashoffset = Math.max(0,visionPathLength - visionDrawLength);
-
-                    const reachScrollPercentage = (window.innerHeight-reach.getBoundingClientRect().top - 200)/reach.getBoundingClientRect().height
-                    const reachDrawLength = reachPathLength * Math.max(0,reachScrollPercentage*0.8);
-                    reachPath.style.strokeDashoffset = Math.max(0,reachPathLength - reachDrawLength);
-
                     const showreelcontainer = document.getElementById('showReelContainer');
                     if(showreelcontainer.getBoundingClientRect().y - window.innerHeight < 40 && showreelcontainer.getBoundingClientRect().bottom>0){
                         const reelScrollPer = (window.innerHeight - showreelcontainer.getBoundingClientRect().top)/((beyond.getBoundingClientRect().height + window.innerHeight));
@@ -677,12 +672,6 @@ const initHomeMainApp = function(){
                             const translateValue = showreelcontainer.getBoundingClientRect().width * reelScrollPer * 0.7;
                             showreelcontainer.style.transform = 'translateX(-'+ translateValue +'px)';
                         }
-                    }
-
-                    if(backendCanvas.getBoundingClientRect().y - window.innerHeight < 0 && backendCanvas.getBoundingClientRect().bottom > 0){
-                        this.startBackendCanvasRendering();
-                    }else{
-                        this.suspendBackendCanvasRendering();
                     }
                 }
             });
@@ -873,6 +862,8 @@ const initHomeMainApp = function(){
                 const con = document.getElementById('console');
 				rotaionX = rotaionX + e.rotationRate.beta;
 				rotaionY = rotaionY + e.rotationRate.alpha;
+                rotTarget.x = e.rotationRate.beta;
+                rotTarget.y = e.rotationRate.alpha;
             },
             onWindowResize() {
                 this.backgroundDom.style.width = '100%';
@@ -918,7 +909,7 @@ const initHomeMainApp = function(){
 			},
             suspendBackgroundRender(){
                 if(!this.bigCanvas)
-                    window.removeEventListener( 'DeviceMotionEvent', this.onDeviceRotation );
+                    window.removeEventListener( 'devicemotion', this.onDeviceRotation );
                 else
                     window.removeEventListener( 'pointermove',this.onPointerMove);
 				this.renderer.setAnimationLoop(null);
@@ -958,21 +949,54 @@ const initHomeMainApp = function(){
             },
             initBackendRenderEngine(){
                 backendCanvas = document.getElementById('perspectiveCardCanvas');
-                for(let i=0; i<2;i++){
+                this.cardCount = this.bigCanvas ? 2 : 1; 
+                for(let i=0; i<this.cardCount;i++){
                     const perspectiveCardScene = new THREE.Scene();
-                    const perspectiveCardCamera = new THREE.PerspectiveCamera( 20, bCanvaWidth/bCanvaHeight, 1, 200 );
-                    perspectiveCardCamera.position.z = 50;
+                    const fov = this.bigCanvas ? 20 : 55;
+                    const perspectiveCardCamera = new THREE.PerspectiveCamera( fov, bCanvaWidth/bCanvaHeight, 0.1, 2000 );
+                    if(this.bigCanvas){
+                        perspectiveCardCamera.position.z = 50;
+                        perspectiveCardCamera.zoom = 1;
+                        perspectiveCardScene.add( new THREE.HemisphereLight( 0xaaaaaa, 0x444444, 3 ) );
+                        const light = new THREE.DirectionalLight( 0xffffff, 1.5 );
+                        light.position.set( 1, 1, 1 );
+                        perspectiveCardScene.add( light );
+                    }else{
+                        perspectiveCardCamera.position.z = 5;
+                        perspectiveCardCamera.zoom = 1.8;
+                        perspectiveCardCamera.position.y = -5;
+                        perspectiveCardCamera.lookAt(0,-5,-10);
+                        perspectiveCardScene.fog = new THREE.FogExp2( 0xb0c1b5, 0.008 );
+                        perspectiveCardScene.add( new THREE.HemisphereLight( 0xaaaa55, 0x444422, 1 ) );
+                        const light = new THREE.DirectionalLight( 0xfffff5, 1.5 );
+                        light.castShadow = true;
+                        light.position.set( 0, 10, 20 );
+                        light.target.y=0;
+                        light.target.z=-10;
+                        perspectiveCardScene.add( light );
+                        perspectiveCardScene.add( light.target );
+                    }
                     perspectiveCardScene.userData.element = document.getElementById('perspectiveCardDiv'+ (i+1));
                     perspectiveCardScene.userData.camera = perspectiveCardCamera;
-                    perspectiveCardScene.add( new THREE.HemisphereLight( 0xaaaaaa, 0x444444, 3 ) );
-                    const light = new THREE.DirectionalLight( 0xffffff, 1.5 );
-                    light.position.set( 1, 1, 1 );
-                    perspectiveCardScene.add( light );
+
                     backendScenes.push(perspectiveCardScene);
                     const Gloader = new GLTFLoader();
-                    Gloader.load( './objects/panda.glb', (gltf)=>{
-                        gltf.scene.position.y = -11;
-                        gltf.scene.scale.set(3.8,3.8,3.8);
+                    const smallCanvas = !this.bigCanvas;
+                    const modelFileName = this.bigCanvas? 'panda.glb' : 'mpanda.glb';
+                    Gloader.load( './objects/'+modelFileName, (gltf)=>{
+                        if(smallCanvas){
+                            gltf.scene.position.y = -10.5;
+                            gltf.scene.scale.set(3.5,3.5,3.5);
+                            gltf.scene.traverse(function(child) {
+                                if (child.isMesh) {
+                                  child.castShadow = true;
+                                  child.receiveShadow = true;
+                                }
+                            })
+                        }else{
+                            gltf.scene.position.y = -11;
+                            gltf.scene.scale.set(3.8,3.8,3.8);
+                        }
                         backendScenes[i].add(gltf.scene);
                     });
                 }
@@ -982,11 +1006,20 @@ const initHomeMainApp = function(){
                 backendRenderer.setSize( backendCanvas.getBoundingClientRect().width, backendCanvas.getBoundingClientRect().height, false );
             },
             startBackendCanvasRendering(){
-                document.addEventListener( 'pointermove', this.onPointerMove );
+                if(!this.bigCanvas)
+                    window.addEventListener( 'devicemotion', this.onDeviceRotation, false );
+                else
+                    document.addEventListener( 'pointermove', this.onPointerMove );
 				backendRenderer.setAnimationLoop(this.backendCanvasRender);
             },
             suspendBackendCanvasRendering(){
-                document.removeEventListener( 'pointermove', this.onPointerMove );
+                if(!this.bigCanvas){
+                    window.removeEventListener( 'devicemotion', this.onDeviceRotation );
+                    rotTarget.x = 0;
+                    rotTarget.y=0;
+                }
+                else
+                    document.removeEventListener( 'pointermove', this.onPointerMove );
                 backendRenderer.setAnimationLoop(null);
             },
             backendCanvasRender(){
@@ -995,7 +1028,7 @@ const initHomeMainApp = function(){
 				backendRenderer.clear();
 				backendRenderer.setClearColor( 0xefef00 , 0);
 				backendRenderer.setScissorTest( true );
-                for(let i=0; i<2;i++){
+                for(let i=0; i<this.cardCount;i++){
                     const rect = backendScenes[i].userData.element.getBoundingClientRect();
                     if ( rect.bottom < 0 || rect.top > window.innerHeight ||
                         rect.right < 0 || rect.left > window.innerWidth ) {
@@ -1004,9 +1037,15 @@ const initHomeMainApp = function(){
                    const width = rect.right - rect.left;
                    const height = rect.bottom - rect.top;
                    const bottom = Math.abs(backendCanvas.getBoundingClientRect().bottom - rect.bottom);
-                   const midY = (rect.top + (height/2));
-                   const midX = (rect.left + (width/2));
-                   backendScenes[i].children[2]?.lookAt((target.x - midX)/25,-(target.y - midY)/25,60);
+                   if(this.bigCanvas){
+                    const midY = (rect.top + (height/2));
+                    const midX = (rect.left + (width/2));
+                    backendScenes[i].children[2]?.lookAt((target.x - midX)/25,-(target.y - midY)/25,60);
+                   }else{
+                    backendScenes[i].userData.camera.position.x = backendScenes[i].userData.camera.position.x + -(rotTarget.x )*0.002;
+                    backendScenes[i].userData.camera.position.y = Math.max(-10,backendScenes[i].userData.camera.position.y - -(rotTarget.y )*0.002);
+                    backendScenes[i].userData.camera.lookAt(0,-5,-25);
+                   }
 				   backendScenes[i].userData.camera.aspect = width / height;
 				   backendScenes[i].userData.camera.updateProjectionMatrix();
                    backendRenderer.setViewport( rect.left, bottom, width, height );
@@ -1217,6 +1256,26 @@ const initHomeMainApp = function(){
                     <div id="showReelCardContainer">
                         <showreelcard></showreelcard>
                     </div>
+                    
+                    <p class="projectSubTitle">We build epic realtime interactive experience to blow people's mind.</p>
+                    
+                    <div id="perspectiveCardContainer">
+                        <canvas id="perspectiveCardCanvas"></canvas>
+                        <div id="perspectiveGridDiv">
+                            <div class="perspectiveContainerGrid">
+                                <div class="demoArea">
+                                    <div id="perspectiveCardDiv1" class="perspectiveCardDiv">
+                                    </div>
+                                </div>
+                                <div class="demoSection">
+                                    <h1 class="demoSectionTitle">Embedding</h1>
+                                    <p class="demoSectionPara">
+                                        Add an extra dimension to your existing websites hustle free and upscale your customer experience with mind blowing interactive 3D experience.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div id="svgPathContainers">
                         <svg id="beyondPathSvg" viewBox="0 150 430 470" preserveAscpectRatio="xMidYMax meet">
                             <defs>
@@ -1282,7 +1341,7 @@ const initHomeMainApp = function(){
                             387.00,514.00 398.00,543.00 405.00,553.00" />
                         </svg>
                     </div>
-                    <p class="projectSubTitle">We build epic realtime interactive experience to blow people's mind.</p>
+
                     <div class="grid">
                         <div class="typog" id="typog1">Beyond</div>
                         <jewelleryframe :identifier="'jewelleryViewer1'"></jewelleryframe>
