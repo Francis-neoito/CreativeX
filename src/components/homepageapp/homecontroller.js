@@ -678,6 +678,12 @@ const initHomeMainApp = function(){
                             showreelcontainer.style.transform = 'translateX(-'+ translateValue +'px)';
                         }
                     }
+
+                    if(backendCanvas.getBoundingClientRect().y - window.innerHeight < 0 && backendCanvas.getBoundingClientRect().bottom > 0){
+                        this.startBackendCanvasRendering();
+                    }else{
+                        this.suspendBackendCanvasRendering();
+                    }
                 }
             });
         },
@@ -951,7 +957,7 @@ const initHomeMainApp = function(){
                 document.dispatchEvent(updateProgressEvent);
             },
             initBackendRenderEngine(){
-                backendCanvas = document.getElementById('backendCanvas');
+                backendCanvas = document.getElementById('perspectiveCardCanvas');
                 for(let i=0; i<2;i++){
                     const perspectiveCardScene = new THREE.Scene();
                     const perspectiveCardCamera = new THREE.PerspectiveCamera( 20, bCanvaWidth/bCanvaHeight, 1, 200 );
@@ -974,14 +980,16 @@ const initHomeMainApp = function(){
 				backendRenderer.setClearColor( 0xffffff, 0 );
 				backendRenderer.setPixelRatio( window.devicePixelRatio );
                 backendRenderer.setSize( backendCanvas.getBoundingClientRect().width, backendCanvas.getBoundingClientRect().height, false );
-                this.startBackendCanvasRendering();
             },
             startBackendCanvasRendering(){
                 document.addEventListener( 'pointermove', this.onPointerMove );
 				backendRenderer.setAnimationLoop(this.backendCanvasRender);
             },
+            suspendBackendCanvasRendering(){
+                document.removeEventListener( 'pointermove', this.onPointerMove );
+                backendRenderer.setAnimationLoop(null);
+            },
             backendCanvasRender(){
-                backendCanvas.style.transform = `translateY(${window.scrollY}px)`;
                 backendRenderer.setClearColor( 0xffffff , 0);
 				backendRenderer.setScissorTest( false );
 				backendRenderer.clear();
@@ -989,13 +997,13 @@ const initHomeMainApp = function(){
 				backendRenderer.setScissorTest( true );
                 for(let i=0; i<2;i++){
                     const rect = backendScenes[i].userData.element.getBoundingClientRect();
-                    if ( rect.bottom < 0 || rect.top > backendCanvas.clientHeight ||
-                        rect.right < 0 || rect.left > backendCanvas.clientWidth ) {
+                    if ( rect.bottom < 0 || rect.top > window.innerHeight ||
+                        rect.right < 0 || rect.left > window.innerWidth ) {
                        continue; // it's off screen
                    }
                    const width = rect.right - rect.left;
                    const height = rect.bottom - rect.top;
-                   const bottom = backendCanvas.clientHeight - rect.bottom;
+                   const bottom = Math.abs(backendCanvas.getBoundingClientRect().bottom - rect.bottom);
                    const midY = (rect.top + (height/2));
                    const midX = (rect.left + (width/2));
                    backendScenes[i].children[2]?.lookAt((target.x - midX)/25,-(target.y - midY)/25,60);
@@ -1069,23 +1077,26 @@ const initHomeMainApp = function(){
                     </div>
                     <p class="projectSubTitle">We build epic realtime interactive experience to blow people's mind.</p>
                     <div id="perspectiveCardContainer">
-                        <div class="perspectiveContainerGrid">
-                            <div class="demoArea">
-                                <div id="perspectiveCardDiv1" class="perspectiveCardDiv">
+                        <canvas id="perspectiveCardCanvas"></canvas>
+                        <div id="perspectiveGridDiv">
+                            <div class="perspectiveContainerGrid">
+                                <div class="demoArea">
+                                    <div id="perspectiveCardDiv1" class="perspectiveCardDiv">
+                                    </div>
+                                </div>
+                                <div class="demoSection">
+                                    <p class="demoSectionPara">
+                                        Add an extra dimension to your existing websites hustle free and upscale your customer experience with mind blowing interactive 3D experience.
+                                    </p>
                                 </div>
                             </div>
-                            <div class="demoSection">
-                                <p class="demoSectionPara">
-                                    Add an extra dimension to your existing websites hustle free and upscale your customer experience with mind blowing interactive 3D experience.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="perspectiveContainerGrid">
-                            <div class="demoSection">
-                                <h1 class="demoSectionTitle">Embedding</h1>
-                            </div>
-                            <div class="demoArea">
-                                <div id="perspectiveCardDiv2" class="perspectiveCardDiv" style="float:right">
+                            <div class="perspectiveContainerGrid">
+                                <div class="demoSection" style="display: flex;">
+                                    <h1 class="demoSectionTitle">Embedding</h1>
+                                </div>
+                                <div class="demoArea">
+                                    <div id="perspectiveCardDiv2" class="perspectiveCardDiv" style="float:right">
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -245,6 +245,7 @@ body{
   position: absolute;
   top:100vh;
   width: 100%;
+  background-color: #fffff9;
 }
 #projectContainerFlex{
   margin-top: 8rem;
@@ -310,26 +311,35 @@ body{
 }
 
 #perspectiveCardContainer{
-  width: 70%;
+  position: relative;
+  width: 100%;
   height: 90vh;
   margin-bottom: 5vh;
   margin-top: 3rem;
-  display: flex;
-  flex-direction: row;
-  padding-left: 15%;
-  padding-right: 15%;
 }
-.perspectiveContainerGrid{
+#perspectiveCardCanvas{
+  position: absolute;
   height: 100%;
   width: 100%;
 }
-.demoSection{
+#perspectiveGridDiv{
+  height: 100%;
   width: 100%;
+}
+.perspectiveContainerGrid{
   height: 50%;
+  width: 80%;
+  padding: 0 10%;
+  display: flex;
+  flex-direction: row;
+}
+.demoSection{
+  width: 50%;
+  height: 100%;
 }
 .demoArea{
-  width: 100%;
-  height: 50%;
+  width: 50%;
+  height: 100%;
 }
 
 .perspectiveCardDiv{
@@ -338,34 +348,36 @@ body{
   border-radius: 2rem;
   box-shadow: 0px 0px 50px rgba(20, 20, 20, 0.149)inset,
     0px 15px 35px rgba(0, 0, 0, 0.188) inset,
-    0px 10px 20px rgba(7, 7, 7, 0.389) inset,
-    2px 5px 10px rgba(7, 7, 7, 0.499)inset
+    0px 10px 15px rgba(7, 7, 7, 0.389) inset,
+    0px 5px 10px rgba(7, 7, 7, 0.499)inset
   ;
 }
 
 .demoSectionTitle{
   margin: 0;
-  font-family: Roboto;
+  font-family: sans-serif;
   text-transform: uppercase;
-  font-size: 7rem;
-  font-weight: 400;
+  font-size: 6rem;
+  font-weight: 600;
   width: 100%;
-  text-align: end;
-  color: #242424;
+  color: #000000;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-image: linear-gradient(
     148deg,#00a8ff 0%, #00519e 100%);
-  padding-top: 7rem;
+  align-self: flex-end;
+  padding-bottom: 20%;
 }
 .demoSectionPara{
   font-family: sans-serif;
-  font-size: 2.5rem;
+  font-size: 1.75rem;
   color: #515151;
-  width: 90%;
+  text-align: justify;
+  width: calc(70%);
   line-height: 3rem;
   padding-top: 5rem;
+  padding-left: 30%;
 }
 
 .jewelleryContainer{
