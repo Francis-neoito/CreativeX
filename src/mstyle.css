@@ -572,7 +572,7 @@ body{
   overflow: hidden;
   width: 100%;
   z-index: 0;
-  margin-top: 8vh;
+  margin-top: 5vh;
 }
 .grid{
   position: relative;

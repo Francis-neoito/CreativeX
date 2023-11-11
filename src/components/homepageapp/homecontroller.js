@@ -1277,11 +1277,11 @@ const initHomeMainApp = function(){
                                 <div id="perspectiveCardDiv1" class="perspectiveCardDiv"></div>
                             </div>
                         </div>
-                        <div class="demoSection">
-                            <p class="demoSectionPara">
-                                Add an extra dimension to your existing websites hustle free and upscale your customer experience with mind blowing interactive 3D experience.
-                            </p>
-                        </div>
+                    </div>
+                    <div class="demoSection">
+                        <p class="demoSectionPara">
+                            Add an extra dimension to your existing websites hustle free and upscale your customer experience with mind blowing interactive 3D experience.
+                        </p>
                     </div>
                     <div id="svgPathContainers">
                         <svg id="beyondPathSvg" viewBox="0 150 430 470" preserveAscpectRatio="xMidYMax meet">
