@@ -22,6 +22,7 @@ let backendRenderer;
 let backendCanvas = null;
 let bCanvaWidth = window.innerWidth;
 let bCanvaHeight = window.innerHeight;
+
 //advance offset for monitoring renderer's visibility
 let rootMarginValue = Math.floor(screen.height*0.20);
 const initHomeMainApp = function(){
@@ -962,15 +963,15 @@ const initHomeMainApp = function(){
                         light.position.set( 1, 1, 1 );
                         perspectiveCardScene.add( light );
                     }else{
-                        perspectiveCardCamera.position.z = 5;
+                        perspectiveCardCamera.position.z = 8;
                         perspectiveCardCamera.zoom = 1.8;
                         perspectiveCardCamera.position.y = -5;
                         perspectiveCardCamera.lookAt(0,-5,-10);
-                        perspectiveCardScene.fog = new THREE.FogExp2( 0xb0c1b5, 0.008 );
-                        perspectiveCardScene.add( new THREE.HemisphereLight( 0xaaaa55, 0x444422, 1 ) );
-                        const light = new THREE.DirectionalLight( 0xfffff5, 1.5 );
+                        perspectiveCardScene.fog = new THREE.FogExp2( 0xb0c1b5, 0.0042 );
+                        perspectiveCardScene.add( new THREE.HemisphereLight( 0xaaaaaa, 0x444444, 3 ) );
+                        const light = new THREE.DirectionalLight( 0xffffff, 2 );
                         light.castShadow = true;
-                        light.position.set( 0, 10, 20 );
+                        light.position.set( 15, 15, 15 );
                         light.target.y=0;
                         light.target.z=-10;
                         perspectiveCardScene.add( light );
@@ -1001,13 +1002,16 @@ const initHomeMainApp = function(){
                     });
                 }
                 backendRenderer = new THREE.WebGLRenderer( { canvas: backendCanvas, antialias: true } );
-				backendRenderer.setClearColor( 0xffffff, 0 );
+				backendRenderer.setClearColor( 0xffffff, this.bigCanvas? 0 : 1 );
 				backendRenderer.setPixelRatio( window.devicePixelRatio );
                 backendRenderer.setSize( backendCanvas.getBoundingClientRect().width, backendCanvas.getBoundingClientRect().height, false );
             },
             startBackendCanvasRendering(){
-                if(!this.bigCanvas)
+                if(!this.bigCanvas){
+                    rotTarget.x = 0;
+                    rotTarget.y=0;
                     window.addEventListener( 'devicemotion', this.onDeviceRotation, false );
+                }
                 else
                     document.addEventListener( 'pointermove', this.onPointerMove );
 				backendRenderer.setAnimationLoop(this.backendCanvasRender);
@@ -1017,16 +1021,18 @@ const initHomeMainApp = function(){
                     window.removeEventListener( 'devicemotion', this.onDeviceRotation );
                     rotTarget.x = 0;
                     rotTarget.y=0;
+                    backendScenes[0].userData.camera.position.x = 0;
+                    backendScenes[0].userData.camera.position.y = -5;
                 }
                 else
                     document.removeEventListener( 'pointermove', this.onPointerMove );
                 backendRenderer.setAnimationLoop(null);
             },
             backendCanvasRender(){
-                backendRenderer.setClearColor( 0xffffff , 0);
+                backendRenderer.setClearColor( 0xffffff , this.bigCanvas? 0 : 1);
 				backendRenderer.setScissorTest( false );
 				backendRenderer.clear();
-				backendRenderer.setClearColor( 0xefef00 , 0);
+				backendRenderer.setClearColor( 0xfffff0 , this.bigCanvas? 0 : 1);
 				backendRenderer.setScissorTest( true );
                 for(let i=0; i<this.cardCount;i++){
                     const rect = backendScenes[i].userData.element.getBoundingClientRect();
@@ -1048,8 +1054,8 @@ const initHomeMainApp = function(){
                    }
 				   backendScenes[i].userData.camera.aspect = width / height;
 				   backendScenes[i].userData.camera.updateProjectionMatrix();
-                   backendRenderer.setViewport( rect.left, bottom, width, height );
-                   backendRenderer.setScissor( rect.left, bottom, width, height );
+                   backendRenderer.setViewport( rect.left - backendCanvas.getBoundingClientRect().left, bottom, width, height );
+                   backendRenderer.setScissor( rect.left - backendCanvas.getBoundingClientRect().left, bottom, width, height );
                    backendRenderer.render( backendScenes[i], backendScenes[i].userData.camera );
                 }
             },
@@ -1260,20 +1266,21 @@ const initHomeMainApp = function(){
                     <p class="projectSubTitle">We build epic realtime interactive experience to blow people's mind.</p>
                     
                     <div id="perspectiveCardContainer">
-                        <canvas id="perspectiveCardCanvas"></canvas>
-                        <div id="perspectiveGridDiv">
-                            <div class="perspectiveContainerGrid">
-                                <div class="demoArea">
-                                    <div id="perspectiveCardDiv1" class="perspectiveCardDiv">
-                                    </div>
-                                </div>
-                                <div class="demoSection">
-                                    <h1 class="demoSectionTitle">Embedding</h1>
-                                    <p class="demoSectionPara">
-                                        Add an extra dimension to your existing websites hustle free and upscale your customer experience with mind blowing interactive 3D experience.
-                                    </p>
-                                </div>
+                        <h1 class="demoSectionTitle">Embedding</h1>
+                        <div id="mobileBodyDesignContainer">
+                            <div id="mobileDisplayContainer">
+                                <div id="dynamicIsland"></div>
+                                <div id="powerButton"></div>
+                                <div id="volumeButton1"></div>
+                                <div id="volumeButton2"></div>
+                                <canvas id="perspectiveCardCanvas"></canvas>
+                                <div id="perspectiveCardDiv1" class="perspectiveCardDiv"></div>
                             </div>
+                        </div>
+                        <div class="demoSection">
+                            <p class="demoSectionPara">
+                                Add an extra dimension to your existing websites hustle free and upscale your customer experience with mind blowing interactive 3D experience.
+                            </p>
                         </div>
                     </div>
                     <div id="svgPathContainers">
