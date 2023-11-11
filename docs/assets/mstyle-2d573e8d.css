@@ -372,22 +372,87 @@ body{
   height: 100vh;
   margin-top: 3rem;
 }
+#mobileBodyDesignContainer{
+  height: 80vh;
+  width: 73%;
+  padding: 1rem;
+  background-color: #000000;
+  margin: auto;
+  border-radius: 3rem;
+  box-shadow: 2px 15px 15px rgba(12, 12, 12, 0.334),0px 1px 10px rgba(12, 12, 12, 0.634)
+      ;
+}
+#mobileDisplayContainer{
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+  border-radius: 2.5rem;
+}
+#dynamicIsland{
+  position: absolute;
+  left: calc(50% - 6vh);
+  top: 1vh;
+  height: 3.5vh;
+  width: 12vh;
+  background-color: #000000;
+  border-radius: 1rem;
+  z-index: 500;
+}
+#powerButton{
+  position: absolute;
+  top: 25%;
+  right: -1.3rem;
+  height: 9vh;
+  width: 2vh;
+  background-color: #000000;
+  border-radius: 0.4rem;
+  z-index: 500;
+}
+#volumeButton1{
+  position: absolute;
+  top: calc(25% + 2vh);
+  left: -1.3rem;
+  height: 7vh;
+  width: 2vh;
+  background-color: #000000;
+  border-radius: 0.4rem;
+  z-index: 500;
+}
+#volumeButton2{
+  position: absolute;
+  top: calc(25% - 6vh);
+  left: -1.3rem;
+  height: 7vh;
+  width: 2vh;
+  background-color: #000000;
+  border-radius: 0.4rem;
+  z-index: 500;
+}
 #perspectiveCardCanvas{
   position: absolute;
   height: 100%;
   width: 100%;
+  border-radius: 2rem;
+  z-index: 100;
 }
-#perspectiveGridDiv{
+.perspectiveCardDiv{
+  position: relative;
   height: 100%;
   width: 100%;
+  z-index: 200;
+}
+/* #perspectiveGridDiv{
+  height: 90%;
+  width: 90%;
+  margin: auto;
 }
 .perspectiveContainerGrid{
   height: 100%;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-}
+} */
 .demoSection{
+  margin-top: 5vh;
   width: 80%;
   padding: 0 10%;
   height: 30%;
@@ -397,18 +462,16 @@ body{
   height: 80%;
 }
 
-.perspectiveCardDiv{
-  height: 95%;
-  width: 100%;
-}
-
 .demoSectionTitle{
   margin: 0;
-  margin-top: 1rem;
+  margin-top: 20vh;
+  margin-bottom: 3rem;
+  text-align: center;
   font-family: sans-serif;
   text-transform: uppercase;
-  font-size: 2.5rem;
-  font-weight: 400;
+  font-size: 3.75rem;
+  font-weight: 600;
+  letter-spacing: -2px;
   width: 100%;
   color: #000000;
   background-clip: text;
@@ -509,7 +572,7 @@ body{
   overflow: hidden;
   width: 100%;
   z-index: 0;
-  margin-top: 8vh;
+  margin-top: 5vh;
 }
 .grid{
   position: relative;
