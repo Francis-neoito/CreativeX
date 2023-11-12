@@ -959,8 +959,8 @@ const initHomeMainApp = function(){
                         perspectiveCardCamera.position.z = 50;
                         perspectiveCardCamera.zoom = 1;
                         perspectiveCardScene.add( new THREE.HemisphereLight( 0xaaaaaa, 0x444444, 3 ) );
-                        const light = new THREE.DirectionalLight( 0xffffff, 1.5 );
-                        light.position.set( 1, 1, 1 );
+                        const light = new THREE.DirectionalLight( 0xffffff, 3 );
+                        light.position.set( 10, 10, 10 );
                         perspectiveCardScene.add( light );
                     }else{
                         perspectiveCardCamera.position.z = 8;
@@ -1123,28 +1123,38 @@ const initHomeMainApp = function(){
                     <p class="projectSubTitle">We build epic realtime interactive experience to blow people's mind.</p>
                     <div id="perspectiveCardContainer">
                         <canvas id="perspectiveCardCanvas"></canvas>
-                        <div id="perspectiveGridDiv">
-                            <div class="perspectiveContainerGrid">
-                                <div class="demoArea">
-                                    <div id="perspectiveCardDiv1" class="perspectiveCardDiv">
+                        <div id="perspectiveGridContainer">
+                            <div id="perspectiveGrid">
+                                <div class="perspectiveDiv">
+                                    <div class="door" id="door11"><img style="height:100%; width:100%" src="./images/greendoor.png"></div>
+                                    <div class="door" id="door12"><img style="height:100%; width:100%" src="./images/greendoor.png"></div>
+                                    <div class="windowFrame">
+                                        <div class="windowPane">
+                                            <div class="windowCut" id="windowCut1">
+                                                <div class="perspectiveCardDiv" id="perspectiveCardDiv1"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="demoSection">
-                                    <p class="demoSectionPara">
-                                        Add an extra dimension to your existing websites hustle free and upscale your customer experience with mind blowing interactive 3D experience.
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="perspectiveContainerGrid">
-                                <div class="demoSection" style="display: flex;">
-                                    <h1 class="demoSectionTitle">Embedding</h1>
-                                </div>
-                                <div class="demoArea">
-                                    <div id="perspectiveCardDiv2" class="perspectiveCardDiv" style="float:right">
+                                <div style="height:100%;width:20%;"></div>
+                                <div class="perspectiveDiv" style="justify-content: end;">
+                                    <div class="door" id="door21"><img style="height:100%; width:100%" src="./images/greendoor.png"></div>
+                                    <div class="door" id="door22"><img style="height:100%; width:100%" src="./images/greendoor.png"></div>
+                                    <div class="windowFrame">
+                                        <div class="windowPane">
+                                            <div class="windowCut" id="windowCut2">
+                                                <div class="perspectiveCardDiv" id="perspectiveCardDiv2"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div id="embedTitle"><span>EMBEDDING</span></div>
+                        <div id="embedSub"><span>"Add an extra dimension to your existing websites hustle free and upscale your customer experience with mind blowing interactive 3D experience."</span></div>
+                        <div id="lintel1"></div>
+                        <div id="bushHedge"></div>
+                        <div id="lintel2"></div>
                     </div>
                     <div id="svgPathContainers">
                         <svg id="beyondPathSvg" viewBox="0 0 1908 888" preserveAscpectRatio="xMidYMax meet">
