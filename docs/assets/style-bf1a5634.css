@@ -278,7 +278,7 @@ body{
   font-family: Arial, sans-serif;
   padding-bottom: 1rem;
   margin-bottom: 10vh;
-  margin-top: 15vh;
+  margin-top: 25vh;
   z-index: 10;
 }
 
@@ -312,17 +312,144 @@ body{
 
 #perspectiveCardContainer{
   position: relative;
+  margin-top: 25vh;
   width: 100%;
-  height: 90vh;
-  margin-bottom: 5vh;
-  margin-top: 3rem;
+  height: 135vh;
+  background-color:rgb(255, 64, 64) ;
 }
 #perspectiveCardCanvas{
   position: absolute;
-  height: 100%;
+  height: 100vh;
   width: 100%;
+  top:25vh;
+  z-index: 100;
 }
-#perspectiveGridDiv{
+#perspectiveGridContainer{
+  position: absolute;
+  height: 80vh;
+  width: calc(100% - 20vw);
+  top:25vh;
+  padding: 10vh 10vw;
+  z-index: 50;
+}
+#perspectiveGrid{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.perspectiveDiv{
+  position: relative;
+  height: 80%;
+  width: 40%;
+  display: flex;
+  align-items: center;
+}
+#embedTitle{
+  position: absolute;
+  bottom: 15vh;
+  right: 4vw;
+  font-size: 10rem;
+  font-family: Roboto;
+  font-weight: 600;
+  color: rgba(255, 234, 0, 0.8);
+  letter-spacing: -8px;
+  transform: skewX(-1deg);
+}
+#embedSub{
+  position: absolute;
+  padding-left: 3rem;
+  transform: skewX(-2deg);
+  bottom: 20vh;
+  color: rgb(255, 255, 255);
+  font-family: cursive;
+  font-size:1.75rem;
+  width: 45%;
+}
+#lintel1{
+  position: absolute;
+  height: 5vh;
+  width: 100%;
+  background-color: rgb(253, 253, 245);
+  box-shadow: 0px 15px 10px rgba(0, 0, 0, 0.5),
+  0px 0px 10px rgba(0, 0, 0, 0.447),
+  0px 5px 5px rgba(0, 0, 0, 0.447) inset,
+  0px -1px 15px rgba(0, 0, 0, 0.205) inset;
+  border-bottom: 5px solid rgb(253, 253, 245);
+  border-top: 5px solid rgb(253, 253, 245);
+}
+#lintel2{
+  position: absolute;
+  bottom: 0;
+  height: 5vh;
+  width: 100%;
+  background-color: rgb(253, 253, 245);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5),
+  0px -10px 10px rgba(0, 0, 0, 0.447);
+}
+#bushHedge{
+  position: absolute;
+  bottom: 4vh;
+  height: 13vh;
+  width: 100%;
+  background-image: url("/CreativeX/images/bushhedge.png");
+}
+.windowFrame{
+  background-color: ivory;
+  height: calc(70% - 1rem);
+  width: calc(55% - 1rem);
+  border-radius: 0.25rem;
+  box-shadow: -10px 20px 5px rgba(0, 0, 0, 0.398),
+  -15px 25px 5px rgba(0, 0, 0, 0.1),
+  -5px 0px 5px rgba(0, 0, 0, 0.406),
+  0px 10px 5px rgba(0, 0, 0, 0.306);
+  padding: 0.5rem 0.5rem;
+}
+.windowPane{
+  height: calc(100% - 2rem);
+  width: calc(100% - 2rem);
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.434) inset;
+  padding: 1rem 1rem;
+}
+.windowCut{
+  height: calc(100% - 10px);
+  width: calc(100% - 10px);
+  background-color: rgb(255, 247, 193);
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 5px solid ivory;
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.434),
+  -10px 0px 20px rgba(0, 0, 0, 0.52) inset;
+}
+#windowCut1{
+  background-image: url("/CreativeX/images/interior1.jpg");
+}
+#windowCut2{
+  background-image: url("/CreativeX/images/interior2.jpg");
+}
+.door{
+  position: absolute;
+  height: calc(70% - 3rem - 10px);
+  box-shadow: 2px 10px 5px rgba(0, 0, 0, 0.304),
+    0px 10px 15px rgba(0, 0, 0, 0.404);
+}
+#door11{
+  transform: translateX(-90%);
+}
+#door12{
+  transform: rotateY(180deg);
+  left: calc(55% - 1rem);
+}
+#door21{
+  left: 45%;
+  transform: translateX(-90%);
+}
+#door22{
+  right: 0;
+  transform: translateX(90%) rotateY(180deg) ;
+}
+.perspectiveCardDiv{
   height: 100%;
   width: 100%;
 }
@@ -342,16 +469,7 @@ body{
   height: 100%;
 }
 
-.perspectiveCardDiv{
-  height: 95%;
-  width: 70%;
-  border-radius: 2rem;
-  box-shadow: 0px 0px 50px rgba(20, 20, 20, 0.149)inset,
-    0px 15px 35px rgba(0, 0, 0, 0.188) inset,
-    0px 10px 15px rgba(7, 7, 7, 0.389) inset,
-    0px 5px 10px rgba(7, 7, 7, 0.499)inset
-  ;
-}
+
 
 .demoSectionTitle{
   margin: 0;
