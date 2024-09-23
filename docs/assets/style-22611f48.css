@@ -656,15 +656,15 @@ body{
 }
 
 #footerContainer{
-  background-color: #e8e5dc;
+  background-color: #ffffff;
   width: 100%;
-  height: 50vh;
+  height: 20vh;
 }
 #footerTitle{
-  font-size: 2rem;
+  font-size: rem;
   font-family: Roboto;
-  height: 5rem;
+  height: 3rem;
   padding-left: 2rem;
-  padding-top: 5rem;
-  color: #0f0f0f;
+  padding-top: 2rem;
+  color: #003d88;
 }

@@ -10971,9 +10971,9 @@ void main( void ) {
                     <div id="homeAppBannerLogo">
                         <span id="logoTextX">X</span>
                         <span id="logoTextCreative">CREATIVE</span>
-                        <div id="logoOrg">
+                        <!--<div id="logoOrg">
                             Powered by NEOITO
-                        </div>
+                        </div>-->
                         <table id="bannerOptions">
                             <tr>
                                 <td><div class="bannerOptionsButton" style="">Contact Us</div></td>
@@ -11092,10 +11092,11 @@ void main( void ) {
                     </div>
                     <div id="footerContainer">
                         <div id="footerTitle">
-                            <div style="font-size: 3rem;margin-bottom:5rem">CreativeX</div>
-                            <div style="font-size: 1.5rem;font-family:sans-serif;margin-left:3rem">
-                                General Enquiries <br>
-                                safaldas.g@neoito.com
+                            <div style="font-size: 1.5rem;margin-bottom:2rem">CreativeX</div>
+                            <div style="font-size: 1rem;font-family:sans-serif">
+                                Contact us <br>
+                                francis.xvr@outlook.com<br>
+                                safaldasg@gmail.com
                             </div>
                         </div>
                         
@@ -11124,9 +11125,9 @@ void main( void ) {
                     <div id="homeAppBannerLogo">
                         <span id="logoTextX">X</span>
                         <span id="logoTextCreative">CREATIVE</span>
-                        <div id="logoOrg">
+                        <!--<div id="logoOrg">
                             Powered by NEOITO
-                        </div>
+                        </div>-->
                         <table id="bannerOptions">
                             <tr>
                                 <td><div class="bannerOptionsButton" style="">Contact Us</div></td>
@@ -11251,10 +11252,11 @@ void main( void ) {
                     </div>
                     <div id="footerContainer">
                         <div id="footerTitle">
-                            <div style="font-size: 1.3rem;margin-bottom:2rem">CreativeX</div>
-                            <div style="font-size: 1.2rem;font-family:sans-serif;">
-                                General Enquiries <br>
-                                safaldas.g@neoito.com
+                            <div style="font-size: 1.1rem;margin-bottom:1rem">CreativeX</div>
+                            <div style="font-size: 1rem;font-family:sans-serif;">
+                                Contact us <br>
+                                francis.xvr@outlook.com<br>
+                                safaldasg@gmail.com
                             </div>
                         </div>
                         
